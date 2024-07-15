@@ -6,14 +6,14 @@
 #include <vector>
 
 #include <Window.h>
-#include <Shader.h>
+#include <Shader/Shader.h>
 #include <Camera.h>
 #include <World.h>
 #include <UI.h>
-#include "Actor.h"
-#include "Cube.h"
-#include <Sphere.h>
-#include <Plane.h>
+#include "Actors/Actor.h"
+#include "Actors/Cube.h"
+#include <Actors/Sphere.h>
+#include <Actors/Plane.h>
 
 using namespace std;
 

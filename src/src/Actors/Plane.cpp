@@ -1,9 +1,5 @@
-#include "Plane.h"
+#include <Actors/Plane.h>
 #include <iostream>
-
-
-
-
 
 Plane::Plane(Shader *shader, glm::vec3 startPoint, glm::vec3 right, glm::vec3 up, glm::vec2 resolution) : Actor(shader, "Plane")
 {

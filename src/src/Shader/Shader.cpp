@@ -1,5 +1,5 @@
-#include "Shader/Shader.h"
-#include "Shader/loadShaders.hpp"
+#include <Shader/Shader.h>
+#include <Shader/loadShaders.hpp>
 #include <iostream>
 
 Shader::Shader(Camera* camera, Window* window){

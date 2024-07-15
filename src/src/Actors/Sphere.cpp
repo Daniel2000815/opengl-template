@@ -1,5 +1,5 @@
-#include "Sphere.h"
-#include "Cube.h"
+#include <Actors/Sphere.h>
+#include <Actors/Cube.h>
 
 Sphere::Sphere(Shader* shader, uint16_t resolution, float radius) : Actor(shader, "Sphere") {
     Cube c(shader, resolution);

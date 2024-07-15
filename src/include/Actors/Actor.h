@@ -1,7 +1,7 @@
 #ifndef __SCENECOMPONENT__H_
 #define __SCENECOMPONENT__H_
 
-#include "Shader.h"
+#include <Shader/Shader.h>
 #include <vector>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

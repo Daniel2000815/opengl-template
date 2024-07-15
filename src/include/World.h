@@ -4,8 +4,8 @@
 #include <vector>
 #include <ctime>
 #include <chrono>
-#include <Actor.h>
 #include <Window.h>
+#include <Actors/Actor.h>
 
 class World {
 private:
