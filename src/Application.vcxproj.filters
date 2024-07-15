@@ -80,6 +80,7 @@
     <None Include="Makefile" />
     <None Include="Shaders\frag_basic.glsl" />
     <None Include="Shaders\vertex_basic.glsl" />
+    <None Include="Shaders\grid.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Camera.h">

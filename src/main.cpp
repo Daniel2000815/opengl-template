@@ -31,9 +31,11 @@ int main()
     //Grid grid(&shader, 3);
     Sphere s(shader, 16, 0.5f);
     Cube c(shader, 16);
-    Plane p(shader);
+    Plane p(shader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
 
     s.setPosition(glm::vec3(-2, 0, 0));
+    p.setScale(vec3(10));
+    p.setPosition(vec3(-5, -1, 5));
     world->addActor(&c);
     world->addActor(&s);
     world->addActor(&p);

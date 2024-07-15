@@ -21,14 +21,16 @@ class Actor
         vec3 _position;
         vec3 _rotation;
         vec3 _scale;
+
+        std::string _texturePath;
         
     public:
         // Constructors
         Actor(Shader* shader);
         Actor(Shader* shader, std::string name);
+        Actor(Shader* shader, std::string name, std::string texturePath);
         Actor(Shader* shader, const vector<GLfloat> &vertices, const vector<GLuint> &indices);
         Actor(Shader* shader, const vector<GLfloat> &vertices, const vector<GLuint> &indices, vector<GLfloat> colors);
-        Actor(Shader* shader, const vector<GLfloat> &vertices, const vector<GLuint> &indices, vector<GLfloat> texCoords, const char *texturePath);
 
         // Getters
         inline vector<GLfloat>  vertices()       { return _vertices; }

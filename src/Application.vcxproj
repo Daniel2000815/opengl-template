@@ -155,6 +155,7 @@
   <ItemGroup>
     <None Include="Makefile" />
     <None Include="Shaders\frag_basic.glsl" />
+    <None Include="Shaders\grid.glsl" />
     <None Include="Shaders\vertex_basic.glsl" />
   </ItemGroup>
   <ItemGroup>

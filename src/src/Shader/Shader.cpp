@@ -3,7 +3,7 @@
 #include <iostream>
 
 Shader::Shader(Camera* camera, Window* window){
-    _programID = loadShaders( "./Shaders/vertex_basic.glsl", "./Shaders/frag_basic.glsl" );
+    _programID = loadShaders( "./Shaders/vertex_basic.glsl", "./Shaders/grid.glsl" );
     _deltaTimeID = glGetUniformLocation(_programID, "deltaTime");
     _modelMatrixID = glGetUniformLocation(_programID, "modelMatrix");
     _viewMatrixID = glGetUniformLocation(_programID, "viewMatrix");

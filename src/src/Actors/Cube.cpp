@@ -1,5 +1,5 @@
-#include "Cube.h"
-#include <Plane.h>
+#include <Actors/Cube.h>
+#include <Actors/Plane.h>
 #include <iostream>
 #include "stb_image.h"
 
@@ -13,8 +13,6 @@ void Cube::drawFace(glm::vec3 startPoint, glm::vec3 v1, glm::vec3 v2, glm::vec2 
     v1 /=  resolution[0];
     v2 /= resolution[1];
 
-    
-    
     for(int i=0; i<=resolution[1]; i++){
         for(int j=0; j<=resolution[0]; j++){
             _vertices.push_back(startPoint[0] + j*v1[0] + i*v2[0]);

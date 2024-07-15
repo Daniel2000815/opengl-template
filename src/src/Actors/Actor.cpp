@@ -1,5 +1,5 @@
-#include "Actor.h"
-#include "Shader.h"
+#include "Actors/Actor.h"
+#include "Shader/Shader.h"
 #include "stb_image.h"
 #include <glm/gtx/matrix_decompose.hpp>
 
@@ -55,7 +55,12 @@ void Actor::bindResources()
     }
 
     if (_texCoords.size() > 0) {
-        loadImage("../resources/textures/smiley.png");
+        printf("%s\n", _texturePath);
+        if(_texturePath.length() == 0)
+            loadImage("../resources/textures/smiley.png");
+        else
+            loadImage(_texturePath.c_str());
+
         GLuint uvBuffer;
         glGenBuffers(1, &uvBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
@@ -92,13 +97,18 @@ Actor::Actor(Shader *shader)
     this->_normals = std::vector<GLfloat>{};
     this->_renderMode = Shader::RenderMode::Color;
     this->_name = "New actor";
-
+    this->_texturePath = "";
     //BindResources();
 }
 
 Actor::Actor(Shader* shader, std::string name) : Actor(shader)
 {
     _name = name;
+}
+
+Actor::Actor(Shader* shader, std::string name, std::string texturePath) : Actor(shader, name)
+{
+    _texturePath = texturePath;
 }
 
 void Actor::tick(float deltaTime)
