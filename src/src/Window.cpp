@@ -49,6 +49,7 @@ Window::Window()
     _window = glfwCreateWindow(_width, _height, "New Window", NULL, NULL);
     if (_window == NULL)
     {
+        std::cout << "Failed to open GLFW window" << std::endl;
         close();
     }
     glfwMakeContextCurrent(_window);
@@ -87,18 +88,30 @@ Window::Window()
         exit(1);
     }
     gladLoadGL();
+
+    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+    glEnable(GL_DEPTH_TEST);
+
+    // For transparency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthFunc(GL_LESS);   //  Accept fragment if it closer to the camera than the former one
 }
 
-void Window::tick(float deltaTime)
+void Window::swap()
 {
     // Clean up
     glfwSwapBuffers(_window);
     glfwPollEvents();
 }
 
+void Window::clear()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 void Window::close()
 {
-    std::cout << "Failed to open GLFW window" << std::endl;
     glfwTerminate();
 }
 
@@ -109,12 +122,15 @@ void Window::onMouseButton(mouse_button_callback lambda)
 
 void Window::onResize(resize_callback lambda)
 {
+    _resize_callbacks.push_back(lambda);
 }
 
 void Window::onScroll(scroll_callback lambda)
 {
+    _scroll_callbacks.push_back(lambda);
 }
 
 void Window::onKey(key_callback lambda)
 {
+    _key_callbacks.push_back(lambda);
 }

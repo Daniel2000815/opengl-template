@@ -20,9 +20,13 @@ Shader::Shader(Camera* camera, Window* window){
     _window = window;
     _camera = camera;
 
-    /*_window->onResize([this](GLFWwindow* window, int w, int h) {
+    _window->onResize([this](GLFWwindow* window, int w, int h) {
         updateWindowDimensions(_camera->fov(), w, h);
-    });*/
+    });
+
+    _window->onScroll([this](GLFWwindow* window, double x, double y) {
+        updateWindowDimensions(_camera->fov(), _window->width(), _window->height());
+    });
 }
 
 Shader::~Shader()
@@ -38,8 +42,8 @@ void Shader::tick(float deltaTime){
     glUniform1f(_deltaTimeID, deltaTime);
 }
 
-void Shader::updateViewMatrix(glm::vec3 cameraPos, glm::vec3 lookAt, glm::vec3 up){
-    _viewMatrix = glm::lookAt(cameraPos, lookAt, up);
+void Shader::updateViewMatrix(glm::mat4 viewMatrix){
+    _viewMatrix = viewMatrix;
 }
 
 void Shader::setModelMatrix(glm::mat4 &newMatrix){

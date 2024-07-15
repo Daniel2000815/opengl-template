@@ -15,7 +15,7 @@ public:
     ~Shader();
     void tick(float deltaTime);
 
-    void updateViewMatrix(glm::vec3 cameraPos, glm::vec3 lookAt = glm::vec3(0,0,0), glm::vec3 up = glm::vec3(0,1,0));
+    void updateViewMatrix(glm::mat4 viewMatrix);
     void setModelMatrix(glm::mat4 &newMatrix);
     void setRenderMode(RenderMode newMode);
     void updateWindowDimensions(float fov, int width, int height);

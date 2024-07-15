@@ -5,11 +5,14 @@
 #include <GLFW/glfw3.h>     // GLFW library
 #include <iostream>         // cout, cerr
 #include <functional>
+#include <imgui.h>
+#include <imgui/imgui_impl_opengl3.h>
+#include <imgui/imgui_impl_glfw.h>
 
-typedef void (*resize_callback)(GLFWwindow*, int, int);
-typedef void (*mouse_button_callback)(GLFWwindow*, int, int, int);
-typedef void (*scroll_callback)(GLFWwindow*, double, double);
-typedef void (*key_callback)(GLFWwindow*, int, int, int, int);
+typedef std::function<void(GLFWwindow*, int, int)> resize_callback;
+typedef std::function<void(GLFWwindow*, int, int, int)> mouse_button_callback;
+typedef std::function<void(GLFWwindow*, double, double)> scroll_callback;
+typedef std::function<void(GLFWwindow*, int, int, int, int)> key_callback;
 
 class Window {
 
@@ -28,7 +31,8 @@ private:
     void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 public:
     Window();
-    void tick(float deltaTime);
+    void swap();
+    void clear();
     void close();
     GLFWwindow* window() { return _window; }
     typedef void* (*loadProc)(const char*);

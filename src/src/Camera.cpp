@@ -1,33 +1,31 @@
 #include "Camera.h"
 
-
-void Camera::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
-{
-    double xpos, ypos;
-    glfwGetCursorPos(window, &xpos, &ypos);
-
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        _mouseMoving = true;
-
-        //TryPickObject(glm::vec2(xpos, ypos));
-    }
-    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
-        _mouseMoving = false;
-}
-
-Camera::Camera(Window* window) :
+Camera::Camera(Window* window, UI* ui) :
     _position(0.0f, 0.0f, 5.0f),
     _horizontalAngle(3.14f),
     _verticalAngle(0.0f),
     _fov(45.0f),
     _mouseMoving(false)
-    //_nearPlane(0.01f),
-    //_farPlane(100.0f),
-    //_viewportAspectRatio(4.0f / 3.0f)
 {
+    _window = window;
+    _ui = ui;
+
+    _window->onScroll([this](GLFWwindow* window, double x, double y) {
+        setFov(fov() + y);
+    });
+
+    _window->onMouseButton([this](GLFWwindow* window, int button, int action, int mods) {
+        _mouseMoving = !_ui->mouseHovering() && button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS;
+    });
+
     rotate(0.0f, 0.0f);
 }
 
+
+const glm::mat4 Camera::viewMatrix() const
+{
+    return glm::lookAt(_position, _position+_forward, _up);
+}
 
 void Camera::rotate(double horizontalDelta, double verticalDelta)
 {
@@ -49,11 +47,11 @@ void Camera::rotate(double horizontalDelta, double verticalDelta)
     _up = glm::cross(_right, _forward);
 }
 
-void Camera::tick(float delta, GLFWwindow& window)
+void Camera::tick(float delta)
 {
     double xpos, ypos;
     static double xLastpos, yLastpos;
-    glfwGetCursorPos(&window, &xpos, &ypos);
+    glfwGetCursorPos(_window->window(), &xpos, &ypos);
     glm::vec2 deltaPos = glm::vec2(xpos - xLastpos, ypos - yLastpos);
 
     if (_mouseMoving) {
@@ -62,16 +60,16 @@ void Camera::tick(float delta, GLFWwindow& window)
 
     xLastpos = xpos; yLastpos = ypos;
 
-    if (glfwGetKey(&window, GLFW_KEY_UP) == GLFW_PRESS)
+    if (glfwGetKey(_window->window(), GLFW_KEY_UP) == GLFW_PRESS)
         moveForward(delta);
 
-    if (glfwGetKey(&window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    if (glfwGetKey(_window->window(), GLFW_KEY_DOWN) == GLFW_PRESS)
         moveForward(-delta);
 
-    if (glfwGetKey(&window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    if (glfwGetKey(_window->window(), GLFW_KEY_RIGHT) == GLFW_PRESS)
         moveRight(delta);
 
-    if (glfwGetKey(&window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    if (glfwGetKey(_window->window(), GLFW_KEY_LEFT) == GLFW_PRESS)
         moveRight(-delta);
 }
 
