@@ -142,6 +142,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Actors\Actor.cpp" />
     <ClCompile Include="src\Actors\Cube.cpp" />
+    <ClCompile Include="src\Actors\Line.cpp" />
     <ClCompile Include="src\Actors\Plane.cpp" />
     <ClCompile Include="src\Actors\Sphere.cpp" />
     <ClCompile Include="src\Camera.cpp" />
@@ -161,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="include\Actors\Actor.h" />
     <ClInclude Include="include\Actors\Cube.h" />
+    <ClInclude Include="include\Actors\Line.h" />
     <ClInclude Include="include\Actors\Plane.h" />
     <ClInclude Include="include\Actors\Sphere.h" />
     <ClInclude Include="include\Camera.h" />
