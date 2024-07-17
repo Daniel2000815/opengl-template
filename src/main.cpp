@@ -23,15 +23,16 @@ int main()
     World* world = new World(window);
     UI* ui = new UI(world, window);
     Camera* camera = new Camera(window, ui);
-    Shader* shader = new Shader(camera, window);
+    Shader* gridShader = new Shader(camera, window, "./Shaders/grid.glsl");
+    Shader* basicShader = new Shader(camera, window);
 
     int timeScale = 1;
     double lastTime = glfwGetTime();
     
     //Grid grid(&shader, 3);
-    Sphere s(shader, 16, 0.5f);
-    Cube c(shader, 16);
-    Plane p(shader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
+    Sphere s(basicShader, 16, 0.5f);
+    Plane p(gridShader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
+    Cube c(basicShader, 16);
 
     s.setPosition(glm::vec3(-2, 0, 0));
     p.setScale(vec3(10));
@@ -48,8 +49,9 @@ int main()
         lastTime = currentTime;
 
         // Read input
-        camera->tick(currentTime);
-        shader->updateViewMatrix(camera->viewMatrix());
+        camera->tick(deltaTime);
+        basicShader->updateViewMatrix(camera->viewMatrix());
+        gridShader->updateViewMatrix(camera->viewMatrix());
 
         // Update objects
         for (auto& actor : world->actors()) {

@@ -41,8 +41,8 @@ private:
     float _horizontalAngle = 0.0f, _verticalAngle = 0.0f;
     float _fov = 45.0f;
     
-    float _moveSpeed = 0.003f;
-    float _rotateSpeed = 0.001f;
+    float _moveSpeed = 2.0f;
+    float _rotateSpeed = 0.1f;
     
     bool _mouseMoving;
 };

@@ -11,7 +11,7 @@ class Shader
 public:
     enum RenderMode {Color, Texture, Normal};
 
-    Shader(Camera* camera, Window* window);
+    Shader(Camera* camera, Window* window, std::string fragmentShaderPath = "./Shaders/frag_basic.glsl");
     ~Shader();
     void tick(float deltaTime);
 

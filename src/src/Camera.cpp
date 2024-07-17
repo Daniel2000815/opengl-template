@@ -60,16 +60,16 @@ void Camera::tick(float delta)
 
     xLastpos = xpos; yLastpos = ypos;
 
-    if (glfwGetKey(_window->window(), GLFW_KEY_UP) == GLFW_PRESS)
+    if ((glfwGetKey(_window->window(), GLFW_KEY_UP) | glfwGetKey(_window->window(), GLFW_KEY_W)) == GLFW_PRESS)
         moveForward(delta);
 
-    if (glfwGetKey(_window->window(), GLFW_KEY_DOWN) == GLFW_PRESS)
+    if ((glfwGetKey(_window->window(), GLFW_KEY_DOWN) | glfwGetKey(_window->window(), GLFW_KEY_S)) == GLFW_PRESS)
         moveForward(-delta);
 
-    if (glfwGetKey(_window->window(), GLFW_KEY_RIGHT) == GLFW_PRESS)
+    if ((glfwGetKey(_window->window(), GLFW_KEY_RIGHT) | glfwGetKey(_window->window(), GLFW_KEY_D)) == GLFW_PRESS)
         moveRight(delta);
 
-    if (glfwGetKey(_window->window(), GLFW_KEY_LEFT) == GLFW_PRESS)
+    if ((glfwGetKey(_window->window(), GLFW_KEY_LEFT) | glfwGetKey(_window->window(), GLFW_KEY_A)) == GLFW_PRESS)
         moveRight(-delta);
 }
 

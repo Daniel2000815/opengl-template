@@ -2,8 +2,8 @@
 #include <Shader/loadShaders.hpp>
 #include <iostream>
 
-Shader::Shader(Camera* camera, Window* window){
-    _programID = loadShaders( "./Shaders/vertex_basic.glsl", "./Shaders/grid.glsl" );
+Shader::Shader(Camera* camera, Window* window, std::string fragmentShaderPath){
+    _programID = loadShaders( "./Shaders/vertex_basic.glsl", fragmentShaderPath.c_str());
     _deltaTimeID = glGetUniformLocation(_programID, "deltaTime");
     _modelMatrixID = glGetUniformLocation(_programID, "modelMatrix");
     _viewMatrixID = glGetUniformLocation(_programID, "viewMatrix");
@@ -35,6 +35,8 @@ Shader::~Shader()
 }
 
 void Shader::tick(float deltaTime){
+    glUseProgram(_programID);
+
     glUniformMatrix4fv(_modelMatrixID, 1, GL_FALSE, &_modelMatrix[0][0]);
     glUniformMatrix4fv(_viewMatrixID, 1, GL_FALSE, &_viewMatrix[0][0]);
     glUniformMatrix4fv(_projectionMatrixID, 1, GL_FALSE, &_projectionMatrix[0][0]);
