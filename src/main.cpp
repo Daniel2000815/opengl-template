@@ -53,16 +53,6 @@ int main()
         basicShader->updateViewMatrix(camera->viewMatrix());
         gridShader->updateViewMatrix(camera->viewMatrix());
 
-        // Update objects
-        for (auto& actor : world->actors()) {
-            if (dynamic_cast<Plane*>(actor) != nullptr)
-                continue;
-
-            actor->rotate(20 * deltaTime, glm::vec3(0, 1, 0));
-            actor->setPosition(vec3(actor->position().x, sin(currentTime), actor->position().z));
-            actor->setScale(vec3(0.5f + (1 + cos(0.5f * currentTime)) / 2.0f));
-        }
-
         world->tick(deltaTime);
         ui->tick();
         window->swap();

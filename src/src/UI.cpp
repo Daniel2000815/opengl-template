@@ -73,6 +73,10 @@ void UI::tick()
  
     // Aquí estableces el título de la ventana
     ImGui::Begin(std::format("OpenGL template | {} fps | {} ms/fr", std::round(_io->Framerate), _frameTime).c_str(), nullptr, window_flags);
+    
+    static int timeScale = _world->timeScale();
+    if (ImGui::SliderInt("Time Scale", &timeScale, 0, 20))
+        _world->setTimeScale(timeScale);
 
     for (auto& object : _world->actors()) {
         if (ImGui::TreeNode(object->name()))

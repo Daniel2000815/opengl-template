@@ -130,15 +130,26 @@ void Actor::setPosition(glm::vec3 position){
     _modelMatrix[3][2] = position[2];
 }
 
-void Actor::setRotation(vec3 eulerAngles)
+void Actor::setRotation(vec3 angle_degrees)
 {
-    rotate(eulerAngles.x, vec3(1.0f, 0.0, 0.0f));
-    rotate(eulerAngles.y, vec3(0.0f, 1.0, 0.0f));
-    rotate(eulerAngles.z, vec3(0.0f, 0.0, 1.0f));
+    glm::mat4 m = glm::mat4(1.0f);
+    m = glm::rotate(m, glm::radians(angle_degrees.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    m = glm::rotate(m, glm::radians(angle_degrees.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    m = glm::rotate(m, glm::radians(angle_degrees.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    
+    
+    _modelMatrix = m;
+    setPosition(_position);
+    setScale(_scale);
+    _rotation = angle_degrees;
 }
 
 void Actor::setScale(vec3 newScale)
 {
+    if (glm::epsilonEqual(newScale.x, 0.0f, 0.001f) || glm::epsilonEqual(newScale.y, 0.0f, 0.001f) || glm::epsilonEqual(newScale.z, 0.0f, 0.001f)) {
+        return;
+    }
+
     vec3 factor = 1.0f / this->_scale * newScale;
     scale(1.0f / this->_scale * newScale);
 }
