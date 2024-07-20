@@ -27,10 +27,8 @@ int main()
     Shader* gridShader = new Shader(camera, window, "./Shaders/grid.glsl");
     Shader* basicShader = new Shader(camera, window);
 
-    int timeScale = 1;
     double lastTime = glfwGetTime();
     
-    //Grid grid(&shader, 3);
     Sphere s(basicShader, 16, 0.5f);
     Plane p(gridShader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
     Cube c(basicShader, 16);
@@ -49,7 +47,7 @@ int main()
     {
         window->clear();
         double currentTime = glfwGetTime();
-        float deltaTime = timeScale * float(currentTime - lastTime);
+        float deltaTime = float(currentTime - lastTime);
         lastTime = currentTime;
 
         // Read input

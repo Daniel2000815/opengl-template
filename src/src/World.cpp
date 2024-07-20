@@ -1,6 +1,9 @@
 #include "World.h"
 #include <Actors/Plane.h>
 
+
+#include <Physics/Collider.h>  // delete this after test
+
 World::World(Window* window) {
     _actors = std::vector<Actor*>{};
     
@@ -26,6 +29,14 @@ World::World(Window* window) {
                 obj->setRenderMode(Shader::RenderMode::Texture);
     });
 
+    _collisionSolver = new CollisionSolver();
+
+    // test
+    printf("TESTING\n");
+    _collisionSolver->solve(new PlaneCollider(), new SphereCollider());
+    _collisionSolver->solve(new SphereCollider(), new SphereCollider());
+    _collisionSolver->solve(new SphereCollider(), new PlaneCollider());
+    _collisionSolver->solve(new PlaneCollider(), new PlaneCollider());
 }
 
 void World::addActor(Actor* actor)

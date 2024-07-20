@@ -6,10 +6,12 @@
 #include <chrono>
 #include <Window.h>
 #include <Actors/Actor.h>
+#include <Physics/CollisionSolver.h>
 
 class World {
 private:
     Window* _window;
+    CollisionSolver* _collisionSolver;
     std::vector<Actor*> _actors;
     int _physicsFPS = 144;
     int _timeScale = 1;
