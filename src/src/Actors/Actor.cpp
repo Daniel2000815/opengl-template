@@ -82,11 +82,7 @@ void Actor::bindResources()
 
 Actor::Actor(Shader *shader)
 {
-    
-    _position = glm::vec3(0.f);
-    _rotation = glm::vec3(0.f);
-    _scale = glm::vec3(1.f);
-
+    _transform = new Transform();
     _modelMatrix = glm::mat4(1.f);
 
     this->_shader = shader;
@@ -124,7 +120,7 @@ void Actor::tick(float deltaTime)
 
 
 void Actor::setPosition(glm::vec3 position){
-    this->_position = position;
+    _transform->position = position;
     _modelMatrix[3][0] = position[0];
     _modelMatrix[3][1] = position[1];
     _modelMatrix[3][2] = position[2];
@@ -139,9 +135,9 @@ void Actor::setRotation(vec3 angle_degrees)
     
     
     _modelMatrix = m;
-    setPosition(_position);
-    setScale(_scale);
-    _rotation = angle_degrees;
+    setPosition(_transform->position);
+    setScale(_transform->scale);
+    _transform->rotation = angle_degrees;
 }
 
 void Actor::setScale(vec3 newScale)
@@ -150,8 +146,8 @@ void Actor::setScale(vec3 newScale)
         return;
     }
 
-    vec3 factor = 1.0f / this->_scale * newScale;
-    scale(1.0f / this->_scale * newScale);
+    vec3 factor = 1.0f / _transform->scale * newScale;
+    scale(1.0f / _transform->scale * newScale);
 }
 
 void Actor::setColor(vec3 color)
@@ -164,14 +160,14 @@ void Actor::setColor(vec3 color)
 }
 
 const Actor* Actor::translate(glm::vec3 translation){
-    this->_position += translation;
+    _transform->position += translation;
     _modelMatrix = glm::translate(_modelMatrix, translation);
 
     return this;
 }
 
 const Actor* Actor::scale(glm::vec3 scale){
-    this->_scale *= scale;
+    _transform->scale *= scale;
     _modelMatrix = glm::scale(_modelMatrix, scale);
 
     return this;
@@ -224,9 +220,9 @@ void Actor::printMesh(){
 void Actor::printTransform() {
     printf("%s transform:\n\tPosition: (%f, %f, %f)\n\tRotation: (%f, %f, %f)\n\tScale: (%f, %f, %f)\n", 
         _name.c_str(), 
-        _position.x, _position.y, _position.z, 
-        _rotation.x, _rotation.y, _rotation.z,
-        _scale.x,    _scale.y,    _scale.z
+        _transform->position.x, _transform->position.y, _transform->position.z,
+        _transform->rotation.x, _transform->rotation.y, _transform->rotation.z,
+        _transform->scale.x,    _transform->scale.y,    _transform->scale.z
     );
 }
 

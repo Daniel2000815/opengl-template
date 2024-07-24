@@ -15,12 +15,18 @@ using std::vector;
 
 class Shader;
 
+struct Transform {
+    vec3 position;
+    vec3 scale;
+    vec3 rotation;
+
+    Transform() : position(0.0f), scale(1.0f), rotation(0.0f) {}
+};
+
 class Actor
 {
     private:
-        vec3 _position;
-        vec3 _rotation;
-        vec3 _scale;
+        Transform* _transform;
 
         std::string _texturePath;
         
@@ -39,9 +45,10 @@ class Actor
         inline vector<GLfloat>  uv()             { return _texCoords; }
         inline Shader*          shader()         { return _shader; }
 
-        inline vec3             position()       { return _position; }
-        inline vec3             rotation()       { return _rotation; }
-        inline vec3             scale()          { return _scale; }
+        inline const Transform*        transform()      { return _transform; }
+        inline vec3             position()       { return _transform->position; }
+        inline vec3             rotation()       { return _transform->rotation; }
+        inline vec3             scale()          { return _transform->scale; }
         inline mat4             modelMatrix()    { return _modelMatrix; }
         inline const char*      name()           { return _name.c_str(); }
         
