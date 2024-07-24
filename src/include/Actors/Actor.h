@@ -8,6 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <string>
+#include <Physics/Collider.h>
 
 using vec3 = glm::vec3;
 using mat4 = glm::mat4;
@@ -27,7 +28,7 @@ class Actor
 {
     private:
         Transform* _transform;
-
+        Collider* _collider;
         std::string _texturePath;
         
     public:
@@ -46,6 +47,7 @@ class Actor
         inline Shader*          shader()         { return _shader; }
 
         inline const Transform*        transform()      { return _transform; }
+        inline const Collider* collider() { return _collider; }
         inline vec3             position()       { return _transform->position; }
         inline vec3             rotation()       { return _transform->rotation; }
         inline vec3             scale()          { return _transform->scale; }

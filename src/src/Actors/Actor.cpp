@@ -157,6 +157,9 @@ void Actor::setColor(vec3 color)
         _colors[3 * i + 1] = color.y;
         _colors[3 * i + 2] = color.z;
     }
+
+    glBindBuffer(GL_ARRAY_BUFFER, _colorBuffer);
+    glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(GLfloat), _colors.data(), GL_STATIC_DRAW);
 }
 
 const Actor* Actor::translate(glm::vec3 translation){

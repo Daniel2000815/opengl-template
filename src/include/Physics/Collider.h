@@ -18,6 +18,9 @@ struct CollisionData {
 	vec3 p2;
 	vec3 normal;
 	float depth;
+	bool hit;
+
+	CollisionData() : p1(0.0f), p2(0.0f), normal(0.0f), depth(0.0f), hit(false) {}
 };
 
 class Collider {

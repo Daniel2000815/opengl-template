@@ -2,16 +2,18 @@
 
 template <typename Func, typename ColliderType1, typename ColliderType2>
 CollisionTest make_collision_test(Func func, const CollisionSolver* solver) {
-    return [solver, func](const Collider* c1, const Collider* c2) -> CollisionData {
+    return [solver, func](const Collider* c1, const Collider* c2, const Transform* t1, const Transform* t2) -> CollisionData {
         return (solver->*func)(
             static_cast<const ColliderType1&>(*c1),
-            static_cast<const ColliderType2&>(*c2)
+            static_cast<const ColliderType2&>(*c2),
+            *t1,
+            *t2
             );
         };
 }
 
 // https://winter.dev/articles/physics-engine
-CollisionData CollisionSolver::solve(const Collider* col1, const Collider* col2)
+CollisionData CollisionSolver::solve(const Collider* col1, const Collider* col2, const Transform* trans1, const Transform* trans2)
 {
     static const CollisionTest tests[ColliderType::N][ColliderType::N] =
     {
@@ -29,10 +31,11 @@ CollisionData CollisionSolver::solve(const Collider* col1, const Collider* col2)
     if (swap)
     {
         std::swap(col1, col2);
+        std::swap(trans1, trans2); // Asegúrate de intercambiar también las transformaciones
     }
 
     printf("Swap = %u\n", swap);
-    CollisionData data = tests[col1->type()][col2->type()](col1, col2);
+    CollisionData data = tests[col1->type()][col2->type()](col1, col2, trans1, trans2);
 
     if (swap)
     {
@@ -41,27 +44,22 @@ CollisionData CollisionSolver::solve(const Collider* col1, const Collider* col2)
     }
 
     return data;
-
 }
 
-
-CollisionData CollisionSolver::testPlaneSphere(const PlaneCollider& p, const SphereCollider& s) const
+CollisionData CollisionSolver::testPlaneSphere(const PlaneCollider& p, const SphereCollider& s, const Transform& t1, const Transform& t2) const
 {
     printf("PLANE vs SPHERE\n");
     return CollisionData();
 }
 
-CollisionData CollisionSolver::testPlanePlane(const PlaneCollider& p, const PlaneCollider& s) const
+CollisionData CollisionSolver::testPlanePlane(const PlaneCollider& p, const PlaneCollider& s, const Transform& t1, const Transform& t2) const
 {
     printf("PLANE vs PLANE\n");
     return CollisionData();
 }
 
-CollisionData CollisionSolver::testSphereSphere(const SphereCollider& s1, const SphereCollider& s2) const
+CollisionData CollisionSolver::testSphereSphere(const SphereCollider& s1, const SphereCollider& s2, const Transform& t1, const Transform& t2) const
 {
     printf("SPHERE vs SPHERE\n");
     return CollisionData();
 }
-
-
-

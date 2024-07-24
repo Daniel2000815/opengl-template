@@ -1,7 +1,5 @@
 #include "World.h"
-#include <Actors/Plane.h>
-
-
+#include <Actors/Cube.h>
 #include <Physics/Collider.h>  // delete this after test
 
 World::World(Window* window) {
@@ -33,10 +31,10 @@ World::World(Window* window) {
 
     // test
     printf("TESTING\n");
-    _collisionSolver->solve(new PlaneCollider(), new SphereCollider());
-    _collisionSolver->solve(new SphereCollider(), new SphereCollider());
-    _collisionSolver->solve(new SphereCollider(), new PlaneCollider());
-    _collisionSolver->solve(new PlaneCollider(), new PlaneCollider());
+    _collisionSolver->solve(new PlaneCollider(), new SphereCollider(), new Transform(), new Transform());
+    _collisionSolver->solve(new SphereCollider(), new SphereCollider(),new Transform(), new Transform());
+    _collisionSolver->solve(new SphereCollider(), new PlaneCollider(), new Transform(), new Transform());
+    _collisionSolver->solve(new PlaneCollider(), new PlaneCollider(), new Transform(), new Transform());
 }
 
 void World::addActor(Actor* actor)
@@ -44,9 +42,8 @@ void World::addActor(Actor* actor)
     _actors.push_back(actor);
 }
 
-void World::tick(float deltaTime) {
-    deltaTime *= _timeScale;
-
+void World::solveDynamics(float delta)
+{
     // Test
     auto pingPong = [](float t, float a, float b) -> float {
         float length = b - a;
@@ -54,17 +51,45 @@ void World::tick(float deltaTime) {
         if (t < length)
             return a + t;
         return b - (t - length);
-    };
+        };
+
+    for (Actor*& actor : _actors) {
+        if (dynamic_cast<Cube*>(actor) != nullptr)
+            actor->setPosition(vec3(pingPong(glfwGetTime() * _timeScale * 2, -2.0f, 2.0f), actor->position().y, actor->position().z));
+
+        actor->setColor(vec3(sin(glfwGetTime())));
+        //actor->rotate(20 * delta, glm::vec3(0, 1, 0));
+        //actor->setScale(vec3(pingPong(glfwGetTime() * _timeScale * 0.2f, 0.5f, 1.5f)));
+        //actor->setPosition(vec3(actor->position().x, pingPong(glfwGetTime() * _timeScale, 0.0f, 1.0f), actor->position().z));
+    }
+}
+
+void World::solveCollisions()
+{
+    std::vector<CollisionData> collisions;
+
+    for (Actor* a : _actors)
+        for (Actor* b : _actors)
+        {
+            if (a == b) break;
+            if (!a->collider() || !b->collider())   continue;
+
+            CollisionData colData = _collisionSolver->solve(
+                a->collider(), b->collider(), a->transform(), b->transform()
+            );
+
+            if (colData.hit)
+                collisions.push_back(colData);
+        }
+}
+
+void World::tick(float deltaTime) {
+    deltaTime *= _timeScale;
+
+
 
     if (_timeScale > 0) {
-        for (Actor*& actor : _actors) {
-            if (dynamic_cast<Plane*>(actor) != nullptr)
-                continue;
-
-            actor->rotate(20 * deltaTime, glm::vec3(0, 1, 0));
-            actor->setScale(vec3(pingPong(glfwGetTime() * _timeScale * 0.2f, 0.5f, 1.5f)));
-            actor->setPosition(vec3(actor->position().x, pingPong(glfwGetTime() * _timeScale, 0.0f, 1.0f), actor->position().z));
-        }
+        solveDynamics(deltaTime);
     }
 
     for (Actor* actor : _actors) {
