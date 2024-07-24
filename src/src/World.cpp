@@ -54,10 +54,11 @@ void World::solveDynamics(float delta)
         };
 
     for (Actor*& actor : _actors) {
-        if (dynamic_cast<Cube*>(actor) != nullptr)
+        //if (dynamic_cast<Cube*>(actor) != nullptr)
+        if(strcmp(actor->name(), "test") == 0)
             actor->setPosition(vec3(pingPong(glfwGetTime() * _timeScale * 2, -2.0f, 2.0f), actor->position().y, actor->position().z));
 
-        actor->setColor(vec3(sin(glfwGetTime())));
+        //actor->setColor(vec3(sin(glfwGetTime())));
         //actor->rotate(20 * delta, glm::vec3(0, 1, 0));
         //actor->setScale(vec3(pingPong(glfwGetTime() * _timeScale * 0.2f, 0.5f, 1.5f)));
         //actor->setPosition(vec3(actor->position().x, pingPong(glfwGetTime() * _timeScale, 0.0f, 1.0f), actor->position().z));
@@ -78,8 +79,10 @@ void World::solveCollisions()
                 a->collider(), b->collider(), a->transform(), b->transform()
             );
 
-            if (colData.hit)
+            if (colData.hit) {
+                a->setColor(vec3(1.0f, 0.0f, 0.0f));
                 collisions.push_back(colData);
+            }
         }
 }
 
