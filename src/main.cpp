@@ -41,9 +41,9 @@ int main()
     c.setPosition(glm::vec3(2, 0, 0));
     p.setScale(vec3(10));
     p.setPosition(vec3(-5, -1, 5));
-    world->addActor(&c);
+    //world->addActor(&c);
     world->addActor(&s);
-    world->addActor(&p);
+    //world->addActor(&p);
     world->addActor(&s1);
     
     while(!window->shouldClose())

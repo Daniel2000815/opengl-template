@@ -69,30 +69,38 @@ void World::solveCollisions()
 {
     std::vector<CollisionData> collisions;
 
+    printf("----------\n");
     for (Actor* a : _actors)
         for (Actor* b : _actors)
         {
+            
             if (a == b) break;
             if (!a->collider() || !b->collider())   continue;
 
+            printf("Testing %s vs %s\n", a->name(), b->name());
             CollisionData colData = _collisionSolver->solve(
                 a->collider(), b->collider(), a->transform(), b->transform()
             );
 
             if (colData.hit) {
                 a->setColor(vec3(1.0f, 0.0f, 0.0f));
+                b->setColor(vec3(0.0f, 0.0f, 1.0f));
                 collisions.push_back(colData);
             }
+            else {
+                a->setColor(vec3(1.0f, 1.0f, 1.0f));
+                b->setColor(vec3(1.0f, 1.0f, 1.0f));
+            }
         }
+    printf("----------\n");
 }
 
 void World::tick(float deltaTime) {
     deltaTime *= _timeScale;
 
-
-
     if (_timeScale > 0) {
         solveDynamics(deltaTime);
+        solveCollisions();
     }
 
     for (Actor* actor : _actors) {

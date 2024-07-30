@@ -2,6 +2,7 @@
 #define __SPHERE__H_
 
 #include "Actor.h"
+#include <Physics/Collider.h>
 
 class Sphere : public Actor
 {

@@ -28,7 +28,6 @@ class Actor
 {
     private:
         Transform* _transform;
-        Collider* _collider;
         std::string _texturePath;
         
     public:
@@ -76,6 +75,7 @@ class Actor
 
     protected:
         std::string _name;
+        Collider* _collider;
 
         GLuint _vao;
         GLuint _vertexBuffer, _colorBuffer, _indiceBuffer, _normalBuffer;
