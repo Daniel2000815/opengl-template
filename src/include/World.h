@@ -14,13 +14,15 @@ private:
     CollisionSolver* _collisionSolver;
     std::vector<Actor*> _actors;
     int _physicsFPS = 144;
-    int _timeScale = 1;
+    int _timeScale = 0;
     float _physicsStep = 1.0f / _physicsFPS;
     std::chrono::high_resolution_clock::time_point _t1, _t2;
     bool _canContinue = true;
 
     void solveDynamics(float delta);
     void solveCollisions();
+
+    
 public:
     static constexpr float G = 1e-11 * 6.673f;
 

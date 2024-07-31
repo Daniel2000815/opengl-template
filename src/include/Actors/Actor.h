@@ -10,11 +10,13 @@
 #include <string>
 #include <Physics/Collider.h>
 
+
 using vec3 = glm::vec3;
 using mat4 = glm::mat4;
 using std::vector;
 
 class Shader;
+class Line;
 
 struct Transform {
     vec3 position;
@@ -29,6 +31,8 @@ class Actor
     private:
         Transform* _transform;
         std::string _texturePath;
+
+        std::vector<Line*> debugNormals;
         
     public:
         // Constructors
@@ -39,7 +43,7 @@ class Actor
         Actor(Shader* shader, const vector<GLfloat> &vertices, const vector<GLuint> &indices, vector<GLfloat> colors);
 
         // Getters
-        inline vector<GLfloat>  vertices()       { return _vertices; }
+        inline const std::vector<GLfloat>& vertices() const { return _vertices; }
         inline vector<GLuint>   indices()        { return _indices; }
         inline vector<GLfloat>  colors()         { return _colors; }
         inline vector<GLfloat>  uv()             { return _texCoords; }
@@ -53,12 +57,21 @@ class Actor
         inline mat4             modelMatrix()    { return _modelMatrix; }
         inline const char*      name()           { return _name.c_str(); }
         
+        inline const vec3 getVertex(int vertexIdx) const {
+            return vec3(_vertices[3 * vertexIdx], _vertices[3 * vertexIdx + 1], _vertices[3 * vertexIdx + 2]);
+        }
+
+        inline const vec3 getNormal(int vertexIdx) const {
+            return vec3(_normals[3 * vertexIdx], _normals[3 * vertexIdx + 1], _normals[3 * vertexIdx + 2]);
+        }
+
         // Setters
         void setPosition(vec3 position);
         void setRotation(vec3 eulerAngles);
         void setScale(vec3 scale);
         void setColor(vec3 color);
         void setRenderMode(Shader::RenderMode renderMode);
+        void setModelMatrix(mat4 m) { _modelMatrix = m; }
         void setName(std::string name);
 
         // Transform

@@ -15,6 +15,7 @@
 #include <Actors/Sphere.h>
 #include <Actors/Line.h>
 #include <Actors/Plane.h>
+#include <Actors/Cylinder.h>
 
 using namespace std;
 
@@ -30,21 +31,34 @@ int main()
     double lastTime = glfwGetTime();
     
     Sphere s(basicShader, 16, 0.5f);
-    Sphere s1(basicShader, 16, 0.5f);
-    s1.setName("test");
-    Plane p(gridShader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
-    Cube c(basicShader, 16);
-    //Line l(basicShader, vec3(.0f, -.5f, .0f), vec3(.0f, .5f, .0f),  vec3(1, 0, 0), 10.0f);
+    Sphere test(basicShader, 16, 0.5f);
+    Cylinder cyl(basicShader, 1.0f, 0.1f, 1.3f, 10);
+    //Cylinder test1(basicShader, 1.0f, 0.4f, 1.3f, 10);
+    //Cylinder test2(basicShader, 1.0f, 1.0f, 1.3f, 10);
+    //Cylinder test3(basicShader, 1.0f, 1.4f, 1.3f, 10);
 
-    s.setPosition(glm::vec3(-2, 0, 0));
+    test.setName("test");
+    cyl.setPosition(vec3(2.0f, 0.0f, 0.0f));
+    /*test2.setPosition(vec3(2.0f, 0.0f, 0.0f));
+    test3.setPosition(vec3(4.0f, 0.0f, 0.0f));*/
+
+    world->addActor(&test);
+    world->addActor(&cyl);
+
+
+    /*Plane p(gridShader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
+    Cube c(basicShader, 16);
+    Line l(basicShader, vec3(.0f, -.5f, .0f), vec3(.0f, .5f, .0f),  vec3(1, 0, 0), 10.0f);
+
+    s.setPosition(glm::vec3(-2, 0, 0));*/
     //l.setPosition(glm::vec3(2, 0, 0));
-    c.setPosition(glm::vec3(2, 0, 0));
+    /*c.setPosition(glm::vec3(2, 0, 0));
     p.setScale(vec3(10));
-    p.setPosition(vec3(-5, -1, 5));
+    p.setPosition(vec3(-5, -1, 5));*/
     //world->addActor(&c);
-    world->addActor(&s);
+    //world->addActor(&s);
     //world->addActor(&p);
-    world->addActor(&s1);
+    
     
     while(!window->shouldClose())
     {

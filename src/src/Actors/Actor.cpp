@@ -2,6 +2,7 @@
 #include "Shader/Shader.h"
 #include "stb_image.h"
 #include <glm/gtx/matrix_decompose.hpp>
+#include <Actors/Line.h>
 
 void Actor::loadImage(const char* filename) {
     // Load texture
@@ -109,6 +110,8 @@ Actor::Actor(Shader* shader, std::string name, std::string texturePath) : Actor(
 
 void Actor::tick(float deltaTime)
 {
+    
+
     _shader->setModelMatrix(_modelMatrix);
     _shader->setRenderMode(_renderMode);
     _shader->tick(deltaTime);
@@ -116,6 +119,17 @@ void Actor::tick(float deltaTime)
     glBindVertexArray(_vao);
     glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, (void*)0);
     glBindVertexArray(0);
+
+    if(_renderMode == Shader::RenderMode::Normal && (dynamic_cast<Line*>(this) == nullptr)){
+        if (debugNormals.size() != _vertices.size()/3) {
+            for (int i = 0; i < _vertices.size()/3; i++)
+                debugNormals.push_back(new Line(_shader, getVertex(i), getVertex(i) + 0.1f*getNormal(i)));
+        }
+        for (auto l : debugNormals) {
+            l->setModelMatrix(_modelMatrix);
+            l->tick(deltaTime);
+        }
+    }
 }
 
 
