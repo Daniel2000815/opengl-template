@@ -32,8 +32,7 @@ void Line::addPoint(glm::vec3 p) {
 
 void Line::setPoint(uint16_t idx, glm::vec3 position, glm::vec3 color)
 {
-    //assert(idx >= 0 && idx < _vertices.size());
-    printf("%u\n", _vertices.size());
+    assert(idx >= 0 && idx < _vertices.size()/3);
     _vertices[3*idx] = position.x;
     _vertices[3 * idx + 1] = position.y;
     _vertices[3 * idx + 2] = position.z;

@@ -34,25 +34,27 @@ int main()
     Sphere s(basicShader, 16, 0.5f);
     Sphere test(basicShader, 16, 0.5f);
     Cylinder cyl(basicShader, 1.0f, 0.1f, 1.3f, 10);
+    Cube c(basicShader, 16);
     //Cylinder test1(basicShader, 1.0f, 0.4f, 1.3f, 10);
     //Cylinder test2(basicShader, 1.0f, 1.0f, 1.3f, 10);
     //Cylinder test3(basicShader, 1.0f, 1.4f, 1.3f, 10);
 
     test.setName("test");
     cyl.setPosition(vec3(2.0f, 0.0f, 0.0f));
+    c.setPosition(glm::vec3(-2, 0, 0));
     /*test2.setPosition(vec3(2.0f, 0.0f, 0.0f));
     test3.setPosition(vec3(4.0f, 0.0f, 0.0f));*/
 
     world->addActor(&test);
     world->addActor(&s);
-    //world->addActor(&cyl);
+    world->addActor(&c);
 
 
-    /*Plane p(gridShader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
-    Cube c(basicShader, 16);
-    Line l(basicShader, vec3(.0f, -.5f, .0f), vec3(.0f, .5f, .0f),  vec3(1, 0, 0), 10.0f);
+    //Plane p(gridShader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
+    
+    //Line l(basicShader, vec3(.0f, -.5f, .0f), vec3(.0f, .5f, .0f),  vec3(1, 0, 0), 10.0f);
 
-    s.setPosition(glm::vec3(-2, 0, 0));*/
+    //s.setPosition(glm::vec3(-2, 0, 0));
     //l.setPosition(glm::vec3(2, 0, 0));
     /*c.setPosition(glm::vec3(2, 0, 0));
     p.setScale(vec3(10));

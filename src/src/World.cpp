@@ -87,7 +87,10 @@ void World::solveCollisions()
                 a->setColor(vec3(1.0f, 0.0f, 0.0f));
                 b->setColor(vec3(0.0f, 0.0f, 1.0f));
                 printf("Normal: (%f, %f, %f)\n", colData.normal.x, colData.normal.y, colData.normal.z);
-                Debug::drawLine(a->shader(), a->position(), a->position() + colData.normal, vec3(0.0f, 1.0f, 0.0f), 50.0f);
+                Debug::drawLine(a->shader(), a->position(), a->position() + colData.normal, vec3(0.0f, 1.0f, 1.0f), 50.0f);
+                Debug::drawLine(b->shader(), b->position(), b->position() - colData.normal, vec3(1.0f, 1.0f, 0.0f), 50.0f);
+                Debug::drawSphere(a->shader(), a->position(), 0.05f, vec3(0.0f, 1.0f, 1.0f));
+                Debug::drawSphere(a->shader(), b->position(), 0.05f, vec3(1.0f, 1.0f, 0.0f));
                 collisions.push_back(colData);
             }
             else {
