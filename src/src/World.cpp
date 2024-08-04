@@ -1,6 +1,7 @@
 #include "World.h"
 #include <Actors/Cube.h>
 #include <Physics/Collider.h>  // delete this after test
+#include <Debug.h>
 
 World::World(Window* window) {
     _actors = std::vector<Actor*>{};
@@ -85,6 +86,8 @@ void World::solveCollisions()
             if (colData.hit) {
                 a->setColor(vec3(1.0f, 0.0f, 0.0f));
                 b->setColor(vec3(0.0f, 0.0f, 1.0f));
+                printf("Normal: (%f, %f, %f)\n", colData.normal.x, colData.normal.y, colData.normal.z);
+                Debug::drawLine(a->shader(), a->position(), a->position() + colData.normal, vec3(0.0f, 1.0f, 0.0f), 50.0f);
                 collisions.push_back(colData);
             }
             else {

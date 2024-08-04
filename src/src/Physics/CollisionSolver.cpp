@@ -61,16 +61,13 @@ CollisionData CollisionSolver::testSphereSphere(const SphereCollider& s1, const 
 {
     vec3 centerVector = (t2.position + s2.center()) - (t1.position + s1.center());
 
-    printf("pos 1: %f %f %f\n", t1.position.x, t1.position.y, t1.position.z);
-    printf("pos 2: %f %f %f\n", t2.position.x, t2.position.y, t2.position.z);
-    printf("center: %f %f %f\n", centerVector.x, centerVector.y, centerVector.z);
-    printf("Distance: %f, Radi: %f\n", glm::length(centerVector), s1.radius() + s2.radius());
-
-    if (glm::length(centerVector) > s1.radius() + s2.radius()) {
+    // TODO: work with non uniform scale
+    if (glm::length(centerVector) > t1.scale.x * s1.radius() + t2.scale.x *s2.radius()) {
         
         return CollisionData();
     }
 
     vec3 normal = glm::normalize(centerVector);
-    return CollisionData(s1.center() + normal * s1.radius(), s2.center() + normal * s2.radius());
+    printf("Normal1: (%f, %f, %f)\n", normal.x, normal.y, normal.z);
+    return CollisionData(s1.center() + normal * s1.radius(), s2.center() - normal * s2.radius());
 }

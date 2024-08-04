@@ -14,7 +14,7 @@ private:
     CollisionSolver* _collisionSolver;
     std::vector<Actor*> _actors;
     int _physicsFPS = 144;
-    int _timeScale = 0;
+    int _timeScale = 1;
     float _physicsStep = 1.0f / _physicsFPS;
     std::chrono::high_resolution_clock::time_point _t1, _t2;
     bool _canContinue = true;

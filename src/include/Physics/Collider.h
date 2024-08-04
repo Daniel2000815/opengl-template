@@ -29,6 +29,7 @@ struct CollisionData {
 		vec3 dir = p2 - p1;
 
 		normal = glm::normalize(dir);
+		printf("Normal2: (%f, %f, %f)\n", normal.x, normal.y, normal.z);
 		depth = dir.length();
 		hit = true;
 	}

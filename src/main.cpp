@@ -16,6 +16,7 @@
 #include <Actors/Line.h>
 #include <Actors/Plane.h>
 #include <Actors/Cylinder.h>
+#include <Debug.h>
 
 using namespace std;
 
@@ -43,7 +44,8 @@ int main()
     test3.setPosition(vec3(4.0f, 0.0f, 0.0f));*/
 
     world->addActor(&test);
-    world->addActor(&cyl);
+    world->addActor(&s);
+    //world->addActor(&cyl);
 
 
     /*Plane p(gridShader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
@@ -72,8 +74,11 @@ int main()
         basicShader->updateViewMatrix(camera->viewMatrix());
         gridShader->updateViewMatrix(camera->viewMatrix());
 
-        world->tick(deltaTime);
+        
         ui->tick();
+        world->tick(deltaTime);
+        Debug::tick(deltaTime);
+
         window->swap();
     }
 

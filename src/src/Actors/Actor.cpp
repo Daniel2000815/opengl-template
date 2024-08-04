@@ -110,8 +110,6 @@ Actor::Actor(Shader* shader, std::string name, std::string texturePath) : Actor(
 
 void Actor::tick(float deltaTime)
 {
-    
-
     _shader->setModelMatrix(_modelMatrix);
     _shader->setRenderMode(_renderMode);
     _shader->tick(deltaTime);
