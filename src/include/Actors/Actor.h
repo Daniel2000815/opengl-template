@@ -43,6 +43,10 @@ class Actor
 
         // Getters
         inline const std::vector<GLfloat>& vertices() const { return _vertices; }
+        inline const std::vector<GLfloat>& normals() const { return _normals; }
+        std::vector<vec3> verticesWorld() const;
+        std::vector<vec3> normalsWorld() const;
+
         inline vector<GLuint>   indices()        { return _indices; }
         inline vector<GLfloat>  colors()         { return _colors; }
         inline vector<GLfloat>  uv()             { return _texCoords; }
@@ -56,19 +60,23 @@ class Actor
         inline mat4             modelMatrix() const   { return _modelMatrix; }
         inline const char*      name()           { return _name.c_str(); }
         
-        inline const vec3 getVertex(int vertexIdx) const {
+        inline vec3 vertex(int vertexIdx) const {
             return vec3(_vertices[3 * vertexIdx], _vertices[3 * vertexIdx + 1], _vertices[3 * vertexIdx + 2]);
         }
 
-        inline const vec3 getNormal(int vertexIdx) const {
+        inline vec3 normal(int vertexIdx) const {
             return vec3(_normals[3 * vertexIdx], _normals[3 * vertexIdx + 1], _normals[3 * vertexIdx + 2]);
         }
+
+        vec3 vertexWorld(int vertexIdx) const;
+        vec3 normalWorld(int vertexIdx) const;
 
         // Setters
         void setPosition(vec3 position);
         void setRotation(vec3 eulerAngles);
         void setScale(vec3 scale);
         void setColor(vec3 color);
+        void setVertex(size_t idx, vec3 localPosition);
         void setRenderMode(Shader::RenderMode renderMode);
         void setModelMatrix(mat4 m) { _modelMatrix = m; }
         void setName(std::string name);
@@ -79,7 +87,7 @@ class Actor
         const Actor* scale(vec3 scale);
 
         glm::mat3 rotationMatrix() const;
-        std::vector<vec3> verticesTransformed() const;
+        
 
         // Lifecycle
         void bindResources();

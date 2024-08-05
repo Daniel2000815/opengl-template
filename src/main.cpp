@@ -46,7 +46,7 @@ int main()
     test3.setPosition(vec3(4.0f, 0.0f, 0.0f));*/
 
     //world->addActor(&test);
-    world->addActor(&s);
+    world->addActor(&c);
     //world->addActor(&c);
 
 
@@ -86,10 +86,16 @@ int main()
             basicShader->updateViewMatrix(camera->viewMatrix());
             gridShader->updateViewMatrix(camera->viewMatrix());
 
+            for (auto n : c.normalsWorld()) {
+                Debug::drawLine(c.shader(), c.position(), c.position() + n, vec3(0.0f), 50.0f);
+            }
             c.rotate(0.5f * deltaTime, glm::vec3(0, 0, 1));
             c.rotate(0.9f * deltaTime, glm::vec3(0, 1, 0));
             c.rotate(0.5f * deltaTime, glm::vec3(1, 0, 0));
 
+            for (int i=0; i<c.vertices().size()/3; i++)
+                Debug::drawLine(c.shader(), c.vertexWorld(i), c.vertexWorld(i) + 0.1f * c.normalWorld(i), vec3(0.0f, 1.0f, 0.0f), 4.0f);
+            
             Debug::drawLine(c.shader(), vec3(0.0f), vec3(100.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 5.0f);
             Debug::drawLine(c.shader(), vec3(0.0f), vec3(0.0f, 100.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), 5.0f);
             Debug::drawLine(c.shader(), vec3(0.0f), vec3(0.0f, 0.0f, 100.0f), vec3(0.0f, 0.0f, 1.0f), 5.0f);

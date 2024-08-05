@@ -1,102 +1,71 @@
 #include "Debug.h"
-#include <Actors/Line.h>
-#include <Actors/Sphere.h>
+#include <cstdio>
 
 // Definición de los miembros estáticos
-std::unordered_map<std::type_index, std::vector<Actor*>> Debug::_pool;
-std::unordered_map<std::type_index, std::vector<Actor*>> Debug::_active;
+std::vector<Line*> Debug::_lines;
+std::vector<Sphere*> Debug::_spheres;
+size_t Debug::_activeLineCount = 0;
+size_t Debug::_activeSphereCount = 0;
 
 void Debug::drawLine(Shader* shader, const glm::vec3& start, const glm::vec3& end, const glm::vec3& color, float width) {
-    Line* line = getObjectFromPool<Line>(shader);
+    Line* line = getNextLine(shader);
 
-    if (line->nPoints() == 0) {
-        line->addPoint(start);
-        line->addPoint(end);
-    }
-    else {
-        line->setPoint(0, start, color);
-        line->setPoint(1, end, color);
-    }
-    
+    line->setVertex(0, start);
+    line->setVertex(1, end);
+    line->setColor(color);
     line->setWidth(width);
-
-    _active[typeid(Line)].push_back(line);
 }
 
-void Debug::drawSphere(Shader* shader, const glm::vec3& position, float radius, const glm::vec3& color)
-{
-    Sphere* s = getObjectFromPool<Sphere>(shader);
-    s->setPosition(position);
-    s->setScale(glm::vec3(radius));
-    s->setColor(color);
-
-    _active[typeid(Sphere)].push_back(s);
+void Debug::drawSphere(Shader* shader, const glm::vec3& position, float radius, const glm::vec3& color) {
+    Sphere* sphere = getNextSphere(shader);
+    sphere->setPosition(position);
+    sphere->setScale(glm::vec3(radius));
+    sphere->setColor(color);
 }
 
-template <typename T>
-T* Debug::getObjectFromPool(Shader* shader) {
-    auto& pool = _pool[typeid(T)];
-    for (auto it = pool.begin(); it != pool.end(); ++it) {
-        T* obj = dynamic_cast<T*>(*it);
-        if (obj) {
-            pool.erase(it);
-            return obj;
-        }
+Line* Debug::getNextLine(Shader* shader) {
+    if (_activeLineCount < _lines.size()) {
+        return _lines[_activeLineCount++];
     }
 
-    return new T(shader);
+    Line* newLine = new Line(shader, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f), 50.0f);
+    _lines.push_back(newLine);
+    _activeLineCount++;
+
+    return newLine;
 }
 
-template <>
-Line* Debug::getObjectFromPool<Line>(Shader* shader) {
-    auto& pool = _pool[typeid(Line)];
-    for (auto it = pool.begin(); it != pool.end(); ++it) {
-        Line* obj = dynamic_cast<Line*>(*it);
-        if (obj) {
-            pool.erase(it);
-            return obj;
-        }
+Sphere* Debug::getNextSphere(Shader* shader) {
+    if (_activeSphereCount < _spheres.size()) {
+        return _spheres[_activeSphereCount++];
     }
 
-    printf("creating Line\n");
-    return new Line(shader, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f), 50.0f);
+    Sphere* newSphere = new Sphere(shader, 2, 1.0f);
+    _spheres.push_back(newSphere);
+
+    _activeSphereCount++;
+
+    return newSphere;
 }
 
-template <>
-Sphere* Debug::getObjectFromPool<Sphere>(Shader* shader) {
-    auto& pool = _pool[typeid(Sphere)];
-    for (auto it = pool.begin(); it != pool.end(); ++it) {
-        Sphere* obj = dynamic_cast<Sphere*>(*it);
-        if (obj) {
-            pool.erase(it);
-            return obj;
-        }
-    }
-
-    return new Sphere(shader, 2, 1.0f);
-}
-
-void Debug::tick(float deltaTime)
-{
+void Debug::tick(float deltaTime) {
     glClear(GL_DEPTH_BUFFER_BIT);
     renderDebugObjects(deltaTime);
 }
 
 void Debug::renderDebugObjects(float deltaTime) {
-    for (auto& [type, objects] : _active) {
-        for (Actor* obj : objects) {
-            obj->tick(deltaTime);
-        }
+    for (size_t i = 0; i < _activeLineCount; ++i) {
+        _lines[i]->tick(deltaTime);
+    }
+
+    for (size_t i = 0; i < _activeSphereCount; ++i) {
+        _spheres[i]->tick(deltaTime);
     }
 
     clear();
 }
 
 void Debug::clear() {
-    for (auto& [type, objects] : _active) {
-        for (Actor* obj : objects) {
-            _pool[type].push_back(obj);
-        }
-        objects.clear();
-    }
+    _activeLineCount = 0;
+    _activeSphereCount = 0;
 }

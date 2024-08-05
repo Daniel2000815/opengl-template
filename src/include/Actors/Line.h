@@ -17,7 +17,6 @@ public:
 
     void tick(float deltaTime = 0.0f) override;
     void addPoint(glm::vec3 p);
-    void setPoint(uint16_t idx, glm::vec3 value, glm::vec3 color = glm::vec3(-1.0f));
     void setWidth(float width) { _width = width; }
     uint16_t nPoints() { return _vertices.size() / 3; }
 

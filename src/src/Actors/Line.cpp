@@ -16,6 +16,7 @@ Line::Line(Shader* shader, glm::vec3 start, glm::vec3 end, glm::vec3 color, floa
     addPoint(end);
 }
 
+// TODO: check if only buffering data agai works
 void Line::addPoint(glm::vec3 p) {
 
     _vertices.push_back(p[0]);
@@ -27,20 +28,6 @@ void Line::addPoint(glm::vec3 p) {
     _colors.push_back(_color[2]);
 
     _renderMode = Shader::RenderMode::Color;
-    bindResources();
-}
-
-void Line::setPoint(uint16_t idx, glm::vec3 position, glm::vec3 color)
-{
-    assert(idx >= 0 && idx < _vertices.size()/3);
-    _vertices[3*idx] = position.x;
-    _vertices[3 * idx + 1] = position.y;
-    _vertices[3 * idx + 2] = position.z;
-
-    if (color.x >= 0.0f) _colors[3 * idx] = color.x;
-    if (color.y >= 0.0f) _colors[3 * idx + 1] = color.y;
-    if (color.z >= 0.0f) _colors[3 * idx + 2] = color.z;
-
     bindResources();
 }
 

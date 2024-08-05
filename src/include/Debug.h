@@ -2,8 +2,6 @@
 #define __DEBUG__H_
 
 #include <vector>
-#include <unordered_map>
-#include <typeindex>
 #include <glm/glm.hpp>
 #include <Actors/Actor.h>
 #include <Actors/Sphere.h>
@@ -20,21 +18,15 @@ public:
     static void clear();
 
 private:
-    static std::unordered_map<std::type_index, std::vector<Actor*>> _pool;    // Pool de objetos reutilizables
-    static std::unordered_map<std::type_index, std::vector<Actor*>> _active;  // Objetos actualmente en uso
+    static std::vector<Line*> _lines;
+    static std::vector<Sphere*> _spheres;
+    static size_t _activeLineCount;
+    static size_t _activeSphereCount;
 
-    template <typename T>
-    static T* getObjectFromPool(Shader* shader);
-
-    template <>
-    static Line* getObjectFromPool<Line>(Shader* shader);
-
-    template <>
-    static Sphere* getObjectFromPool<Sphere>(Shader* shader);
-
+    static Line* getNextLine(Shader* shader);
+    static Sphere* getNextSphere(Shader* shader);
 
     static void renderDebugObjects(float deltaTime);
 };
 
-
-#endif
+#endif // __DEBUG__H_

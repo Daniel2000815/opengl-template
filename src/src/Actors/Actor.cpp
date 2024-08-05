@@ -121,12 +121,27 @@ void Actor::tick(float deltaTime)
     glBindVertexArray(0);
 
     if(_renderMode == Shader::RenderMode::Normal && (dynamic_cast<Line*>(this) == nullptr)){
-        if (debugNormals.size() != _vertices.size()/3)
-            for (int i = 0; i < _vertices.size() / 3; i++)
-                Debug::drawLine(_shader, getVertex(i), getVertex(i) + 0.1f * getNormal(i));
+        for (int i = 0; i < _vertices.size() / 3; i++)
+            Debug::drawLine(_shader, vertexWorld(i), vertexWorld(i) + 0.1f * normalWorld(i));
     }
 }
 
+
+vec3 Actor::vertexWorld(int vertexIdx) const
+{
+    auto orientation = rotationMatrix();
+
+    glm::vec4 p = modelMatrix() * glm::vec4(vertex(vertexIdx), 1.0f);
+    return vec3(p.x, p.y, p.z) / p.w;    
+}
+
+vec3 Actor::normalWorld(int vertexIdx) const
+{
+    auto orientation = rotationMatrix();
+
+    glm::vec4 p = modelMatrix() * glm::vec4(normal(vertexIdx), 1.0f);
+    return vec3(p.x, p.y, p.z) / p.w;
+}
 
 void Actor::setPosition(glm::vec3 position){
     _transform->position = position;
@@ -171,6 +186,18 @@ void Actor::setColor(vec3 color)
     glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(GLfloat), _colors.data(), GL_STATIC_DRAW);
 }
 
+void Actor::setVertex(size_t idx, vec3 localPosition)
+{
+    assert(idx >= 0 && idx < _vertices.size() / 3);
+
+    _vertices[3 * idx] = localPosition.x;
+    _vertices[3 * idx + 1] = localPosition.y;
+    _vertices[3 * idx + 2] = localPosition.z;
+
+    glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(GLfloat), _vertices.data(), GL_STATIC_DRAW);
+}
+
 const Actor* Actor::translate(glm::vec3 translation){
     _transform->position += translation;
     _modelMatrix = glm::translate(_modelMatrix, translation);
@@ -200,7 +227,7 @@ glm::mat3 Actor::rotationMatrix() const {
     return rotationMatrix;
 }
 
-std::vector<vec3> Actor::verticesTransformed() const {
+std::vector<vec3> Actor::verticesWorld() const {
     auto orientation = rotationMatrix();
     std::vector<vec3> vertices;
 
@@ -213,6 +240,22 @@ std::vector<vec3> Actor::verticesTransformed() const {
     }
 
     return vertices;
+}
+
+std::vector<vec3> Actor::normalsWorld() const
+{
+    auto orientation = rotationMatrix();
+    std::vector<vec3> normals;
+
+    for (int i = 0; i < _normals.size() / 3; i++) {
+        glm::vec4 p = modelMatrix() * glm::vec4(vec3(
+            _normals[3 * i], _normals[3 * i + 1], _normals[3 * i + 2]
+        ), 1.0f);
+        vec3 norm_p = vec3(p.x, p.y, p.z) / p.w;
+        normals.push_back(norm_p);
+    }
+
+    return normals;
 }
 
 const Actor* Actor::rotate(float angle_radians, glm::vec3 axis){
