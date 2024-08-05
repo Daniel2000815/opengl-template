@@ -21,7 +21,6 @@ private:
 
     void solveDynamics(float delta);
     void solveCollisions();
-
     
 public:
     static constexpr float G = 1e-11 * 6.673f;

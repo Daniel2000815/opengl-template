@@ -31,8 +31,8 @@ int main()
 
     double lastTime = glfwGetTime();
     
-    Sphere s(basicShader, 16, 0.5f);
-    Sphere test(basicShader, 16, 0.5f);
+    Sphere s(basicShader, 3, 0.5f);
+    Sphere test(basicShader, 4, 0.5f);
     Cylinder cyl(basicShader, 1.0f, 0.1f, 1.3f, 10);
     Cube c(basicShader, 16);
     //Cylinder test1(basicShader, 1.0f, 0.4f, 1.3f, 10);
@@ -41,13 +41,13 @@ int main()
 
     test.setName("test");
     cyl.setPosition(vec3(2.0f, 0.0f, 0.0f));
-    c.setPosition(glm::vec3(-2, 0, 0));
+    //c.setPosition(glm::vec3(-2, 0, 0));
     /*test2.setPosition(vec3(2.0f, 0.0f, 0.0f));
     test3.setPosition(vec3(4.0f, 0.0f, 0.0f));*/
 
-    world->addActor(&test);
+    //world->addActor(&test);
     world->addActor(&s);
-    world->addActor(&c);
+    //world->addActor(&c);
 
 
     //Plane p(gridShader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
@@ -63,23 +63,41 @@ int main()
     //world->addActor(&s);
     //world->addActor(&p);
     
+    bool paused = false;
+    window->onKey([&paused, &lastTime](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        if (action != GLFW_PRESS && key == GLFW_KEY_Z)
+            paused = !paused;
+
+        if(!paused)
+            lastTime = glfwGetTime();
+    });
     
     while(!window->shouldClose())
     {
-        window->clear();
-        double currentTime = glfwGetTime();
-        float deltaTime = float(currentTime - lastTime);
-        lastTime = currentTime;
+        if (!paused) {
 
-        // Read input
-        camera->tick(deltaTime);
-        basicShader->updateViewMatrix(camera->viewMatrix());
-        gridShader->updateViewMatrix(camera->viewMatrix());
+            window->clear();
+            double currentTime = glfwGetTime();
+            float deltaTime = float(currentTime - lastTime);
+            lastTime = currentTime;
 
-        
-        ui->tick();
-        world->tick(deltaTime);
-        Debug::tick(deltaTime);
+            // Read input
+            camera->tick(deltaTime);
+            basicShader->updateViewMatrix(camera->viewMatrix());
+            gridShader->updateViewMatrix(camera->viewMatrix());
+
+            c.rotate(0.5f * deltaTime, glm::vec3(0, 0, 1));
+            c.rotate(0.9f * deltaTime, glm::vec3(0, 1, 0));
+            c.rotate(0.5f * deltaTime, glm::vec3(1, 0, 0));
+
+            Debug::drawLine(c.shader(), vec3(0.0f), vec3(100.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 5.0f);
+            Debug::drawLine(c.shader(), vec3(0.0f), vec3(0.0f, 100.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), 5.0f);
+            Debug::drawLine(c.shader(), vec3(0.0f), vec3(0.0f, 0.0f, 100.0f), vec3(0.0f, 0.0f, 1.0f), 5.0f);
+            
+            world->tick(deltaTime);
+            ui->tick();
+            Debug::tick(deltaTime);
+        }
 
         window->swap();
     }

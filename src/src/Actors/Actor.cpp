@@ -3,6 +3,8 @@
 #include "stb_image.h"
 #include <glm/gtx/matrix_decompose.hpp>
 #include <Actors/Line.h>
+#include <Utils.h>
+#include <Debug.h>
 
 void Actor::loadImage(const char* filename) {
     // Load texture
@@ -56,7 +58,7 @@ void Actor::bindResources()
     }
 
     if (_texCoords.size() > 0) {
-        printf("%s\n", _texturePath);
+        //printf("%s\n", _texturePath);
         if(_texturePath.length() == 0)
             loadImage("../resources/textures/smiley.png");
         else
@@ -78,7 +80,7 @@ void Actor::bindResources()
         glEnableVertexAttribArray(3);
     }
 
-    printf("Error? %s\n", glGetError());
+    //printf("Error? %s\n", glGetError());
 }
 
 Actor::Actor(Shader *shader)
@@ -119,14 +121,9 @@ void Actor::tick(float deltaTime)
     glBindVertexArray(0);
 
     if(_renderMode == Shader::RenderMode::Normal && (dynamic_cast<Line*>(this) == nullptr)){
-        if (debugNormals.size() != _vertices.size()/3) {
-            for (int i = 0; i < _vertices.size()/3; i++)
-                debugNormals.push_back(new Line(_shader, getVertex(i), getVertex(i) + 0.1f*getNormal(i)));
-        }
-        for (auto l : debugNormals) {
-            l->setModelMatrix(_modelMatrix);
-            l->tick(deltaTime);
-        }
+        if (debugNormals.size() != _vertices.size()/3)
+            for (int i = 0; i < _vertices.size() / 3; i++)
+                Debug::drawLine(_shader, getVertex(i), getVertex(i) + 0.1f * getNormal(i));
     }
 }
 
@@ -138,18 +135,18 @@ void Actor::setPosition(glm::vec3 position){
     _modelMatrix[3][2] = position[2];
 }
 
-void Actor::setRotation(vec3 angle_degrees)
+void Actor::setRotation(vec3 angle_radians)
 {
     glm::mat4 m = glm::mat4(1.0f);
-    m = glm::rotate(m, glm::radians(angle_degrees.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    m = glm::rotate(m, glm::radians(angle_degrees.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    m = glm::rotate(m, glm::radians(angle_degrees.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    m = glm::rotate(m, angle_radians.x, glm::vec3(1.0f, 0.0f, 0.0f));
+    m = glm::rotate(m, angle_radians.y, glm::vec3(0.0f, 1.0f, 0.0f));
+    m = glm::rotate(m, angle_radians.z, glm::vec3(0.0f, 0.0f, 1.0f));
     
     
     _modelMatrix = m;
     setPosition(_transform->position);
     setScale(_transform->scale);
-    _transform->rotation = angle_degrees;
+    _transform->rotation = angle_radians;
 }
 
 void Actor::setScale(vec3 newScale)
@@ -188,9 +185,38 @@ const Actor* Actor::scale(glm::vec3 scale){
     return this;
 }
 
+glm::mat3 Actor::rotationMatrix() const {
+    float cx = std::cos(_transform->rotation.x), sx = std::sin(_transform->rotation.x);
+    float cy = std::cos(_transform->rotation.y), sy = std::sin(_transform->rotation.y);
+    float cz = std::cos(_transform->rotation.z), sz = std::sin(_transform->rotation.z);
 
-const Actor* Actor::rotate(float angle_degrees, glm::vec3 axis){
-    _modelMatrix = glm::rotate(_modelMatrix, glm::radians(angle_degrees), axis);
+    // Rotation matrix derived from Euler angles
+    glm::mat3 rotationMatrix = {
+        {cy * cz, -cy * sz, sy},
+        {sx * sy * cz + cx * sz, -sx * sy * sz + cx * cz, -sx * cy},
+        {-cx * sy * cz + sx * sz, cx * sy * sz + sx * cz, cx * cy}
+    };
+
+    return rotationMatrix;
+}
+
+std::vector<vec3> Actor::verticesTransformed() const {
+    auto orientation = rotationMatrix();
+    std::vector<vec3> vertices;
+
+    for (int i = 0; i < _vertices.size() / 3; i++) {
+        glm::vec4 p = modelMatrix() * glm::vec4(vec3(
+            _vertices[3*i], _vertices[3 * i + 1], _vertices[3 * i + 2]
+        ), 1.0f);
+        vec3 norm_p = vec3(p.x, p.y, p.z) / p.w;
+        vertices.push_back(norm_p);
+    }
+
+    return vertices;
+}
+
+const Actor* Actor::rotate(float angle_radians, glm::vec3 axis){
+    _modelMatrix = glm::rotate(_modelMatrix, angle_radians, axis);
 
     glm::vec3 _scale;
     glm::quat _rotation;
@@ -199,8 +225,8 @@ const Actor* Actor::rotate(float angle_degrees, glm::vec3 axis){
     glm::vec4 _perspective;
     glm::decompose(_modelMatrix, _scale, _rotation, _translation, _skew, _perspective);
 
-    _rotation = glm::eulerAngles(glm::conjugate(_rotation)) * 180.f / 3.14159f;
-
+    _rotation = glm::conjugate(_rotation);
+    this->_transform->rotation = glm::eulerAngles(_rotation);
     return this;
 }
 

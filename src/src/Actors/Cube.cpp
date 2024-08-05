@@ -1,8 +1,8 @@
 #include <Actors/Cube.h>
 #include <Actors/Plane.h>
 #include <iostream>
+#include <Utils.h>
 #include "stb_image.h"
-
 
 void Cube::drawFace(glm::vec3 startPoint, glm::vec3 v1, glm::vec3 v2, glm::vec2 resolution)
 {
@@ -61,4 +61,32 @@ Cube::Cube(Shader* shader, uint16_t resolution) : Actor(shader, "Cube") {
     bindResources();
 }
 
+std::vector<glm::vec3> Cube::corners()
+{
+    auto orientation = rotationMatrix();
+    std::vector<vec3> vertices;
+    for (int i = -1; i <= 1; i += 2) {
+        for (int j = -1; j <= 1; j += 2) {
+            for (int k = -1; k <= 1; k += 2) {
+                vec3 corner = _transform->position + glm::vec3(
+                    i * _transform->scale.x / 2,
+                    j * _transform->scale.y / 2,
+                    k * _transform->scale.z / 2);
+
+
+                Utils::printVec("i j k", vec3(i, j, k));
+                printf("(i * _transform->scale.x / 2) = %f\n", (i * _transform->scale.x / 2));
+                Utils::printVec("corner", corner);
+                Utils::printVec("position", _transform->position);
+                Utils::printVec("scale", _transform->scale);
+                glm::vec4 p = modelMatrix() * glm::vec4(corner, 1.0f);
+                vec3 norm_p = vec3(p.x, p.y, p.z) / p.w;
+                vertices.push_back(norm_p);
+            }
+        }
+    }
+
+
+    return vertices;
+}
 

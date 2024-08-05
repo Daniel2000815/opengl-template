@@ -33,6 +33,49 @@ void Debug::drawSphere(Shader* shader, const glm::vec3& position, float radius, 
     _active[typeid(Sphere)].push_back(s);
 }
 
+template <typename T>
+T* Debug::getObjectFromPool(Shader* shader) {
+    auto& pool = _pool[typeid(T)];
+    for (auto it = pool.begin(); it != pool.end(); ++it) {
+        T* obj = dynamic_cast<T*>(*it);
+        if (obj) {
+            pool.erase(it);
+            return obj;
+        }
+    }
+
+    return new T(shader);
+}
+
+template <>
+Line* Debug::getObjectFromPool<Line>(Shader* shader) {
+    auto& pool = _pool[typeid(Line)];
+    for (auto it = pool.begin(); it != pool.end(); ++it) {
+        Line* obj = dynamic_cast<Line*>(*it);
+        if (obj) {
+            pool.erase(it);
+            return obj;
+        }
+    }
+
+    printf("creating Line\n");
+    return new Line(shader, glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f), 50.0f);
+}
+
+template <>
+Sphere* Debug::getObjectFromPool<Sphere>(Shader* shader) {
+    auto& pool = _pool[typeid(Sphere)];
+    for (auto it = pool.begin(); it != pool.end(); ++it) {
+        Sphere* obj = dynamic_cast<Sphere*>(*it);
+        if (obj) {
+            pool.erase(it);
+            return obj;
+        }
+    }
+
+    return new Sphere(shader, 2, 1.0f);
+}
+
 void Debug::tick(float deltaTime)
 {
     glClear(GL_DEPTH_BUFFER_BIT);

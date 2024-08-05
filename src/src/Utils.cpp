@@ -21,6 +21,37 @@ std::vector<T> combineArrays(const std::vector<T>& array1, const std::vector<T>&
     return result;
 }
 
+template <>
+void Utils::printVec(const std::string& name, const glm::vec3& vec) {
+    printf("%s(%f, %f, %f)\n", name.c_str(), vec.x, vec.y, vec.z);
+}
+
+// Especialización para glm::vec4
+template <>
+void Utils::printVec(const std::string& name, const glm::vec4& vec) {
+    printf("%s(%f, %f, %f, %f)\n", name.c_str(), vec.x, vec.y, vec.z, vec.w);
+}
+
+// Especialización para glm::mat3
+template <>
+void Utils::printMat(const std::string& name, const glm::mat3& mat) {
+    printf("%s(\n", name.c_str());
+    for (int i = 0; i < 3; ++i) {
+        printf("  %f %f %f\n", mat[i][0], mat[i][1], mat[i][2]);
+    }
+    printf(")\n");
+}
+
+// Especialización para glm::mat4
+template <>
+void Utils::printMat(const std::string& name, const glm::mat4& mat) {
+    printf("%s(\n", name.c_str());
+    for (int i = 0; i < 4; ++i) {
+        printf("  %f %f %f %f\n", mat[i][0], mat[i][1], mat[i][2], mat[i][3]);
+    }
+    printf(")\n");
+}
+
 template void Utils::copyVecToArray<glm::vec2, GLfloat>(const std::vector<glm::vec2>&, std::vector<GLfloat>&);
 template void Utils::copyVecToArray<glm::vec3, GLfloat>(const std::vector<glm::vec3>&, std::vector<GLfloat>&);
 template void Utils::copyVecToArray<glm::vec2, GLuint>(const std::vector<glm::vec2>&, std::vector<GLuint>&);

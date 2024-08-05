@@ -6,6 +6,8 @@
 #include <typeindex>
 #include <glm/glm.hpp>
 #include <Actors/Actor.h>
+#include <Actors/Sphere.h>
+#include <Actors/Line.h>
 
 class Shader;
 
@@ -24,23 +26,15 @@ private:
     template <typename T>
     static T* getObjectFromPool(Shader* shader);
 
+    template <>
+    static Line* getObjectFromPool<Line>(Shader* shader);
+
+    template <>
+    static Sphere* getObjectFromPool<Sphere>(Shader* shader);
+
+
     static void renderDebugObjects(float deltaTime);
 };
 
-template <typename T>
-T* Debug::getObjectFromPool(Shader* shader) {
-    auto& pool = _pool[typeid(T)];
-    for (auto it = pool.begin(); it != pool.end(); ++it) {
-        T* obj = dynamic_cast<T*>(*it);
-        if (obj) {
-            pool.erase(it);
-            printf("not creating\n");
-            return obj;
-        }
-    }
-
-    printf("creating\n");
-    return new T(shader);
-}
 
 #endif

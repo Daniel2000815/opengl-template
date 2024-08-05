@@ -29,7 +29,6 @@ struct Transform {
 class Actor
 {
     private:
-        Transform* _transform;
         std::string _texturePath;
 
         std::vector<Line*> debugNormals;
@@ -54,7 +53,7 @@ class Actor
         inline vec3             position()       { return _transform->position; }
         inline vec3             rotation()       { return _transform->rotation; }
         inline vec3             scale()          { return _transform->scale; }
-        inline mat4             modelMatrix()    { return _modelMatrix; }
+        inline mat4             modelMatrix() const   { return _modelMatrix; }
         inline const char*      name()           { return _name.c_str(); }
         
         inline const vec3 getVertex(int vertexIdx) const {
@@ -79,6 +78,9 @@ class Actor
         const Actor* rotate(float angle_degrees, vec3 axis);
         const Actor* scale(vec3 scale);
 
+        glm::mat3 rotationMatrix() const;
+        std::vector<vec3> verticesTransformed() const;
+
         // Lifecycle
         void bindResources();
         virtual void tick(float deltaTime);
@@ -89,6 +91,7 @@ class Actor
     protected:
         std::string _name;
         Collider* _collider;
+        Transform* _transform;
 
         GLuint _vao;
         GLuint _vertexBuffer, _colorBuffer, _indiceBuffer, _normalBuffer;

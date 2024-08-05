@@ -5,7 +5,7 @@
 
 World::World(Window* window) {
     _actors = std::vector<Actor*>{};
-    
+
     _window = window;
     _window->onKey([this](GLFWwindow* window, int key, int scancode, int action, int mods) {
         if (action != GLFW_PRESS)
@@ -26,6 +26,8 @@ World::World(Window* window) {
         else if (key == GLFW_KEY_T)
             for (Actor* obj : actors())
                 obj->setRenderMode(Shader::RenderMode::Texture);
+
+
     });
 
     _collisionSolver = new CollisionSolver();
@@ -54,6 +56,7 @@ void World::solveDynamics(float delta)
         return b - (t - length);
         };
 
+    return;
     for (Actor*& actor : _actors) {
         //if (dynamic_cast<Cube*>(actor) != nullptr)
         if(strcmp(actor->name(), "test") == 0)
