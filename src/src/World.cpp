@@ -34,10 +34,10 @@ World::World(Window* window) {
 
     // test
     printf("TESTING\n");
-    _collisionSolver->solve(new PlaneCollider(), new SphereCollider(), new Transform(), new Transform());
+    _collisionSolver->solve(new BoxCollider(), new SphereCollider(), new Transform(), new Transform());
     _collisionSolver->solve(new SphereCollider(), new SphereCollider(),new Transform(), new Transform());
-    _collisionSolver->solve(new SphereCollider(), new PlaneCollider(), new Transform(), new Transform());
-    _collisionSolver->solve(new PlaneCollider(), new PlaneCollider(), new Transform(), new Transform());
+    _collisionSolver->solve(new SphereCollider(), new BoxCollider(), new Transform(), new Transform());
+    _collisionSolver->solve(new BoxCollider(), new BoxCollider(), new Transform(), new Transform());
 }
 
 void World::addActor(Actor* actor)
@@ -56,12 +56,12 @@ void World::solveDynamics(float delta)
         return b - (t - length);
         };
 
-    return;
     for (Actor*& actor : _actors) {
         //if (dynamic_cast<Cube*>(actor) != nullptr)
-        if(strcmp(actor->name(), "test") == 0)
+        if(strcmp(actor->name(), "test2") == 0)
             actor->setPosition(vec3(pingPong(glfwGetTime() * _timeScale * 2, -2.0f, 2.0f), actor->position().y, actor->position().z));
-
+        else if (strcmp(actor->name(), "test1") == 0)
+            actor->setPosition(vec3(actor->position().x, pingPong(glfwGetTime() * _timeScale * 2, 0.0f, 2.0f), actor->position().z));
         //actor->setColor(vec3(sin(glfwGetTime())));
         //actor->rotate(20 * delta, glm::vec3(0, 1, 0));
         //actor->setScale(vec3(pingPong(glfwGetTime() * _timeScale * 0.2f, 0.5f, 1.5f)));
@@ -73,7 +73,7 @@ void World::solveCollisions()
 {
     std::vector<CollisionData> collisions;
 
-    printf("----------\n");
+    printf("a----------\n");
     for (Actor* a : _actors)
         for (Actor* b : _actors)
         {

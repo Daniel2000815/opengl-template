@@ -40,11 +40,12 @@ int main()
     //Cylinder test2(basicShader, 1.0f, 1.0f, 1.3f, 10);
     //Cylinder test3(basicShader, 1.0f, 1.4f, 1.3f, 10);
 
-    test1.setName("test");
-    test2.setName("test");
+    test1.setName("test1");
+    test2.setName("test2");
 
     c.setPosition(vec3(-2.0f, 0.0f, 0.0f));
     s.setPosition(vec3(2.0f, 0.0f, 0.0f));
+    test1.setPosition(vec3(2.0f, 2.0f, 0.0f));
     //cyl.setPosition(vec3(2.0f, 0.0f, 0.0f));
     //c.setPosition(glm::vec3(-2, 0, 0));
     /*test2.setPosition(vec3(2.0f, 0.0f, 0.0f));
@@ -53,7 +54,7 @@ int main()
     world->addActor(&s);
     world->addActor(&test2);
     world->addActor(&c);
-    //world->addActor(&c);
+    world->addActor(&test1);
 
 
     //Plane p(gridShader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
@@ -95,9 +96,9 @@ int main()
             //for (auto n : c.normalsWorld()) {
             //    Debug::drawLine(c.shader(), c.position(), c.position() + n, vec3(0.0f), 50.0f);
             //}
-            c.rotate(0.5f * deltaTime, glm::vec3(0, 0, 1));
-            c.rotate(0.9f * deltaTime, glm::vec3(0, 1, 0));
-            c.rotate(0.5f * deltaTime, glm::vec3(1, 0, 0));
+            //c.rotate(0.5f * deltaTime, glm::vec3(0, 0, 1));
+            //c.rotate(0.9f * deltaTime, glm::vec3(0, 1, 0));
+            //c.rotate(0.5f * deltaTime, glm::vec3(1, 0, 0));
 
             //for (int i=0; i<c.vertices().size()/3; i++)
             //    Debug::drawLine(c.shader(), c.vertexWorld(i), c.vertexWorld(i) + 0.1f * c.normalWorld(i), vec3(0.0f, 1.0f, 0.0f), 4.0f);
@@ -105,7 +106,7 @@ int main()
             Debug::drawLine(c.shader(), vec3(0.0f), vec3(100.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 5.0f);
             Debug::drawLine(c.shader(), vec3(0.0f), vec3(0.0f, 100.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), 5.0f);
             Debug::drawLine(c.shader(), vec3(0.0f), vec3(0.0f, 0.0f, 100.0f), vec3(0.0f, 0.0f, 1.0f), 5.0f);
-            Debug::drawLine(c.shader(), vec3(0.0f, 0.0f, 0.0f), c.normalWorld(0), vec3(1.0f, 0.0f, 1.0f), 5.0f);
+            //Debug::drawLine(c.shader(), vec3(0.0f, 0.0f, 0.0f), c.normalWorld(0), vec3(1.0f, 0.0f, 1.0f), 5.0f);
             
             world->tick(deltaTime);
             ui->tick();

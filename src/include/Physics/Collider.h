@@ -8,7 +8,6 @@ using vec3 = glm::vec3;
 
 enum ColliderType {
 	BOX,
-	PLANE,
 	LINE,
 	SPHERE,
 	N
@@ -59,9 +58,9 @@ public:
 	float radius() const { return _radius; }
 };
 
-class PlaneCollider : public Collider {
+class BoxCollider : public Collider {
 public:
-	PlaneCollider() : Collider(PLANE) {}
+	BoxCollider() : Collider(BOX) {}
 
 private:
 	vec3 _normal;

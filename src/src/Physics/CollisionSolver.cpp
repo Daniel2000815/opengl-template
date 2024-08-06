@@ -17,11 +17,10 @@ CollisionData CollisionSolver::solve(const Collider* col1, const Collider* col2,
 {
     static const CollisionTest tests[ColliderType::N][ColliderType::N] =
     {
-        // BOX     // PLANE                                                       // LINE  // SPHERE                
-        { nullptr, nullptr,                                                      nullptr, nullptr }, // BOX
-        { nullptr, make_collision_test<decltype(&CollisionSolver::testPlanePlane), PlaneCollider, PlaneCollider>(&CollisionSolver::testPlanePlane, this), nullptr, make_collision_test<decltype(&CollisionSolver::testPlaneSphere), PlaneCollider, SphereCollider>(&CollisionSolver::testPlaneSphere, this) }, // PLANE
-        { nullptr, nullptr,                                                      nullptr, nullptr }, // LINE
-        { nullptr, nullptr,                                                      nullptr, make_collision_test<decltype(&CollisionSolver::testSphereSphere), SphereCollider, SphereCollider>(&CollisionSolver::testSphereSphere, this) }  // SPHERE
+        // BOX     // LINE  // SPHERE                
+        { make_collision_test<decltype(&CollisionSolver::testBoxBox), BoxCollider, BoxCollider>(&CollisionSolver::testBoxBox, this), nullptr, make_collision_test<decltype(&CollisionSolver::testBoxSphere), BoxCollider, SphereCollider>(&CollisionSolver::testBoxSphere, this) }, // BOX
+        { nullptr, nullptr, nullptr }, // LINE
+        { nullptr, nullptr, make_collision_test<decltype(&CollisionSolver::testSphereSphere), SphereCollider, SphereCollider>(&CollisionSolver::testSphereSphere, this) }  // SPHERE
     };
 
     assert(col1->type() < ColliderType::N);
@@ -45,15 +44,15 @@ CollisionData CollisionSolver::solve(const Collider* col1, const Collider* col2,
     return data;
 }
 
-CollisionData CollisionSolver::testPlaneSphere(const PlaneCollider& p, const SphereCollider& s, const Transform& t1, const Transform& t2) const
+CollisionData CollisionSolver::testBoxSphere(const BoxCollider& p, const SphereCollider& s, const Transform& t1, const Transform& t2) const
 {
-    printf("PLANE vs SPHERE\n");
+    printf("Box vs SPHERE\n");
     return CollisionData();
 }
 
-CollisionData CollisionSolver::testPlanePlane(const PlaneCollider& p, const PlaneCollider& s, const Transform& t1, const Transform& t2) const
+CollisionData CollisionSolver::testBoxBox(const BoxCollider& p, const BoxCollider& s, const Transform& t1, const Transform& t2) const
 {
-    printf("PLANE vs PLANE\n");
+    printf("Box vs Box\n");
     return CollisionData();
 }
 
@@ -70,4 +69,34 @@ CollisionData CollisionSolver::testSphereSphere(const SphereCollider& s1, const 
     vec3 normal = glm::normalize(centerVector);
     printf("Normal1: (%f, %f, %f)\n", normal.x, normal.y, normal.z);
     return CollisionData(s1.center() + normal * s1.radius(), s2.center() - normal * s2.radius());
+}
+
+std::vector<vec3> CollisionSolver::boxSeparatingAxes(const BoxCollider& boxA, const BoxCollider& boxB)
+{
+    std::vector<vec3> axes;
+
+    //auto orientationA = boxA.eulerToRotationMatrix();
+    //auto orientationB = boxB.eulerToRotationMatrix();
+
+    //// Face normals of boxA (also the edge vectors)
+    //axes.push_back(orientationA[0]);
+    //axes.push_back(orientationA[1]);
+    //axes.push_back(orientationA[2]);
+
+    //// Face normals of boxB (also the edge vectors)
+    //axes.push_back(orientationB[0]);
+    //axes.push_back(orientationB[1]);
+    //axes.push_back(orientationB[2]);
+
+    //// Cross products of edges from boxA and boxB
+    //for (const auto& edgeA : orientationA) {
+    //    for (const auto& edgeB : orientationB) {
+    //        Vec3 crossProduct = edgeA.cross(edgeB);
+    //        if (crossProduct.x != 0 || crossProduct.y != 0 || crossProduct.z != 0) {
+    //            axes.push_back(crossProduct.normalize());
+    //        }
+    //    }
+    //}
+
+    return axes;
 }
