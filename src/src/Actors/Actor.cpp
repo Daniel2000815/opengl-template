@@ -129,18 +129,13 @@ void Actor::tick(float deltaTime)
 
 vec3 Actor::vertexWorld(int vertexIdx) const
 {
-    auto orientation = rotationMatrix();
-
     glm::vec4 p = modelMatrix() * glm::vec4(vertex(vertexIdx), 1.0f);
     return vec3(p.x, p.y, p.z) / p.w;    
 }
 
 vec3 Actor::normalWorld(int vertexIdx) const
 {
-    auto orientation = rotationMatrix();
-
-    glm::vec4 p = modelMatrix() * glm::vec4(normal(vertexIdx), 1.0f);
-    return vec3(p.x, p.y, p.z) / p.w;
+    return rotationMatrix() * normal(vertexIdx);
 }
 
 void Actor::setPosition(glm::vec3 position){
@@ -213,16 +208,24 @@ const Actor* Actor::scale(glm::vec3 scale){
 }
 
 glm::mat3 Actor::rotationMatrix() const {
-    float cx = std::cos(_transform->rotation.x), sx = std::sin(_transform->rotation.x);
-    float cy = std::cos(_transform->rotation.y), sy = std::sin(_transform->rotation.y);
-    float cz = std::cos(_transform->rotation.z), sz = std::sin(_transform->rotation.z);
+    glm::mat3 rotationMatrix;
 
-    // Rotation matrix derived from Euler angles
-    glm::mat3 rotationMatrix = {
-        {cy * cz, -cy * sz, sy},
-        {sx * sy * cz + cx * sz, -sx * sy * sz + cx * cz, -sx * cy},
-        {-cx * sy * cz + sx * sz, cx * sy * sz + sx * cz, cx * cy}
-    };
+    // Copy the upper-left 3x3 part of the 4x4 matrix
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            rotationMatrix[i][j] = _modelMatrix[i][j];
+        }
+    }
+
+    // Normalize the rows to remove scaling
+    for (int i = 0; i < 3; ++i) {
+        float length = std::sqrt(rotationMatrix[i][0] * rotationMatrix[i][0] +
+            rotationMatrix[i][1] * rotationMatrix[i][1] +
+            rotationMatrix[i][2] * rotationMatrix[i][2]);
+        for (int j = 0; j < 3; ++j) {
+            rotationMatrix[i][j] /= length;
+        }
+    }
 
     return rotationMatrix;
 }
