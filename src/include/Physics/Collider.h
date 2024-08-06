@@ -28,7 +28,7 @@ struct CollisionData {
 		vec3 dir = p2 - p1;
 
 		normal = glm::normalize(dir);
-		printf("Normal2: (%f, %f, %f)\n", normal.x, normal.y, normal.z);
+		//printf("Normal2: (%f, %f, %f)\n", normal.x, normal.y, normal.z);
 		depth = dir.length();
 		hit = true;
 	}
@@ -61,11 +61,12 @@ public:
 
 class BoxCollider : public Collider {
 public:
-	BoxCollider() : Collider(BOX) {}
+	BoxCollider() : Collider(BOX), _center(0.0f), _dimensions(0.0f) {}
+	BoxCollider(vec3 center, vec3 dimensions) : Collider(BOX), _center(center), _dimensions(dimensions) {}
 
 private:
-	vec3 _normal;
-	float _distance;
+	vec3 _center;
+	vec3 _dimensions;
 };
 
 #endif

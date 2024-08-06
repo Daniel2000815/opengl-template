@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <Physics/CollisionSolver.h>
 #include <Actors/Sphere.h>
 #include <Actors/Cube.h>
@@ -46,14 +47,28 @@ CollisionData CollisionSolver::solve(const Actor* col1, const Actor* col2)
 
 CollisionData CollisionSolver::testCubeSphere(const Cube& p, const Sphere& s) const
 {
-    printf("Cube vs SPHERE\n");
     return CollisionData();
 }
 
-CollisionData CollisionSolver::testCubeCube(const Cube& p, const Cube& s) const
+CollisionData CollisionSolver::testCubeCube(const Cube& boxA, const Cube& boxB) const
 {
-    printf("Cube vs Cube\n");
-    return CollisionData();
+    auto axes = cubeSeparatingAxes(boxA, boxB);
+    float minPenetration = std::numeric_limits<float>::infinity();
+    vec3 bestAxis;
+
+    for (const auto& axis : axes) {
+        float penetration = computeCubePenetration(boxA, boxB, axis);
+        if (penetration < 0) {
+            return CollisionData();  // No intersection
+        }
+        if (penetration < minPenetration) {
+            minPenetration = penetration;
+            bestAxis = axis;
+        }
+    }
+
+    auto contactPoints = computeCubeContactPoints(boxA, boxB, bestAxis);
+    return CollisionData(contactPoints.first, contactPoints.second);
 }
 
 CollisionData CollisionSolver::testSphereSphere(const Sphere& s1, const Sphere& s2) const
@@ -72,36 +87,86 @@ CollisionData CollisionSolver::testSphereSphere(const Sphere& s1, const Sphere& 
     }
 
     vec3 normal = glm::normalize(centervector);
-    printf("normal1: (%f, %f, %f)\n", normal.x, normal.y, normal.z);
+
     return CollisionData(c1->center() + normal * c1->radius(), c2->center() - normal * c2->radius());
 }
 
-std::vector<vec3> CollisionSolver::boxSeparatingAxes(const BoxCollider& boxA, const BoxCollider& boxB)
+std::vector<vec3> CollisionSolver::cubeSeparatingAxes(const Cube& boxA, const Cube& boxB) const
 {
     std::vector<vec3> axes;
 
-    //auto orientationA = boxA.eulerToRotationMatrix();
-    //auto orientationB = boxB.eulerToRotationMatrix();
+    auto orientationA = boxA.rotationMatrix();
+    auto orientationB = boxB.rotationMatrix();
 
-    //// Face normals of boxA (also the edge vectors)
-    //axes.push_back(orientationA[0]);
-    //axes.push_back(orientationA[1]);
-    //axes.push_back(orientationA[2]);
+    // Face normals of boxA (also the edge vectors)
+    axes.push_back(orientationA[0]);
+    axes.push_back(orientationA[1]);
+    axes.push_back(orientationA[2]);
 
-    //// Face normals of boxB (also the edge vectors)
-    //axes.push_back(orientationB[0]);
-    //axes.push_back(orientationB[1]);
-    //axes.push_back(orientationB[2]);
+    // Face normals of boxB (also the edge vectors)
+    axes.push_back(orientationB[0]);
+    axes.push_back(orientationB[1]);
+    axes.push_back(orientationB[2]);
 
-    //// Cross products of edges from boxA and boxB
-    //for (const auto& edgeA : orientationA) {
-    //    for (const auto& edgeB : orientationB) {
-    //        Vec3 crossProduct = edgeA.cross(edgeB);
-    //        if (crossProduct.x != 0 || crossProduct.y != 0 || crossProduct.z != 0) {
-    //            axes.push_back(crossProduct.normalize());
-    //        }
-    //    }
-    //}
+    // Cross products of edges from boxA and boxB
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            vec3 edgeA = vec3(orientationA[i][0], orientationA[i][1], orientationA[i][2]);
+            vec3 edgeB = vec3(orientationB[j][0], orientationB[j][1], orientationB[j][2]);
+
+            vec3 crossProduct = glm::cross(edgeA, edgeB);
+            if (crossProduct.x != 0 || crossProduct.y != 0 || crossProduct.z != 0) {
+                axes.push_back(glm::normalize(crossProduct));
+            }
+        }
+    }
 
     return axes;
+}
+
+std::pair<float, float> CollisionSolver::projectCube(const Cube& box, const vec3& axis) const
+{
+    vec3 normalizedAxis = glm::normalize(axis);
+    auto vertices = box.verticesWorld();
+    float minProjection = glm::dot(vertices[0], normalizedAxis);
+    float maxProjection = minProjection;
+
+    for (const auto& vertex : vertices) {
+        float projection = glm::dot(vertex, normalizedAxis);
+        minProjection = minProjection < projection ? minProjection : projection;
+        maxProjection = maxProjection > projection ? maxProjection : projection;
+    }
+
+    return { minProjection, maxProjection };
+}
+
+float CollisionSolver::computeCubePenetration(const Cube& boxA, const Cube& boxB, const vec3& axis) const
+{
+    auto [minA, maxA] = projectCube(boxA, axis);
+    auto [minB, maxB] = projectCube(boxB, axis);
+
+    if (maxA < minB || maxB < minA) {
+        return -1;
+    }
+
+    return (std::min)(maxA, maxB) - (std::max)(minA, minB);  // Calculate overlap
+}
+
+std::pair<vec3, vec3> CollisionSolver::computeCubeContactPoints(const Cube& boxA, const Cube& boxB, const vec3& bestAxis) const
+{
+    vec3 normalizedAxis = glm::normalize(bestAxis);
+    float centerA_proj = glm::dot(boxA.transform()->position, normalizedAxis);
+    float centerB_proj = glm::dot(boxB.transform()->position, normalizedAxis);
+
+    vec3 contactPointA, contactPointB;
+    if (centerA_proj < centerB_proj) {
+        contactPointA = boxA.transform()->position + normalizedAxis * (centerB_proj - centerA_proj);
+        contactPointB = boxB.transform()->position - normalizedAxis * (centerB_proj - centerA_proj);
+    }
+    else {
+        contactPointA = boxA.transform()->position - normalizedAxis * (centerA_proj - centerB_proj);
+        contactPointB = boxB.transform()->position + normalizedAxis * (centerA_proj - centerB_proj);
+    }
+
+    return { contactPointA, contactPointB };
 }

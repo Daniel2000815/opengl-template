@@ -19,7 +19,12 @@ public:
     CollisionData testSphereSphere(const Sphere& s1, const Sphere& s2) const;
 
 private:
-    std::vector<vec3> boxSeparatingAxes(const BoxCollider& boxA, const BoxCollider& boxB);
+    std::vector<vec3> cubeSeparatingAxes (const Cube& boxA, const Cube& boxB) const;
+    std::pair<float, float> projectCube(const Cube& box, const vec3& axis) const;
+    float computeCubePenetration(const Cube& boxA, const Cube& boxB, const vec3& axis) const;
+    std::pair<vec3, vec3> computeCubeContactPoints(const Cube& boxA, const Cube& boxB, const vec3& bestAxis) const;
+
+
 };
 
 #endif

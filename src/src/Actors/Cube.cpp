@@ -57,6 +57,7 @@ Cube::Cube(Shader* shader, uint16_t resolution) : Actor(shader, "Cube") {
 
     _colors.assign(_vertices.size(), 1.f);
     _renderMode = Shader::RenderMode::Color;
+    _collider = new BoxCollider(vec3(0.0f), _transform->scale);
 
     bindResources();
 }
@@ -73,12 +74,6 @@ std::vector<glm::vec3> Cube::corners()
                     j * _transform->scale.y / 2,
                     k * _transform->scale.z / 2);
 
-
-                Utils::printVec("i j k", vec3(i, j, k));
-                printf("(i * _transform->scale.x / 2) = %f\n", (i * _transform->scale.x / 2));
-                Utils::printVec("corner", corner);
-                Utils::printVec("position", _transform->position);
-                Utils::printVec("scale", _transform->scale);
                 glm::vec4 p = modelMatrix() * glm::vec4(corner, 1.0f);
                 vec3 norm_p = vec3(p.x, p.y, p.z) / p.w;
                 vertices.push_back(norm_p);

@@ -96,9 +96,9 @@ int main()
             //for (auto n : c.normalsWorld()) {
             //    Debug::drawLine(c.shader(), c.position(), c.position() + n, vec3(0.0f), 50.0f);
             //}
-            //c.rotate(0.5f * deltaTime, glm::vec3(0, 0, 1));
-            //c.rotate(0.9f * deltaTime, glm::vec3(0, 1, 0));
-            //c.rotate(0.5f * deltaTime, glm::vec3(1, 0, 0));
+            c.rotate(0.5f * deltaTime, glm::vec3(0, 0, 1));
+            c.rotate(0.9f * deltaTime, glm::vec3(0, 1, 0));
+            c.rotate(0.5f * deltaTime, glm::vec3(1, 0, 0));
 
             //for (int i=0; i<c.vertices().size()/3; i++)
             //    Debug::drawLine(c.shader(), c.vertexWorld(i), c.vertexWorld(i) + 0.1f * c.normalWorld(i), vec3(0.0f, 1.0f, 0.0f), 4.0f);

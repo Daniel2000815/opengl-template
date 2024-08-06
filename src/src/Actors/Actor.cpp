@@ -261,6 +261,19 @@ std::vector<vec3> Actor::normalsWorld() const
     return normals;
 }
 
+std::vector<vec3> Actor::packedVertices() const
+{
+    std::vector<vec3> vertices;
+
+    for (int i = 0; i < _vertices.size() / 3; i++) {
+        vertices.push_back(vec3(
+            _vertices[3 * i], _vertices[3 * i + 1], _vertices[3 * i + 2]
+        ));
+    }
+
+    return vertices;
+}
+
 const Actor* Actor::rotate(float angle_radians, glm::vec3 axis){
     _modelMatrix = glm::rotate(_modelMatrix, angle_radians, axis);
 

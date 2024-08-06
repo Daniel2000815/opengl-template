@@ -33,7 +33,7 @@ World::World(Window* window) {
     _collisionSolver = new CollisionSolver();
 
     // test
-    printf("TESTING\n");
+    //printf("TESTING\n");
     //_collisionSolver->solve(new BoxCollider(), new SphereCollider(), new Transform(), new Transform());
     //_collisionSolver->solve(new SphereCollider(), new SphereCollider(),new Transform(), new Transform());
     //_collisionSolver->solve(new SphereCollider(), new BoxCollider(), new Transform(), new Transform());
@@ -74,31 +74,31 @@ void World::solveCollisions()
     std::vector<CollisionData> collisions;
 
     printf("a----------\n");
-    for (Actor* a : _actors)
+    for (Actor* a : _actors) {
+        bool col = false;
         for (Actor* b : _actors)
         {
-            
+
             if (a == b) break;
             if (!a->collider() || !b->collider())   continue;
 
-            printf("Testing %s vs %s\n", a->name(), b->name());
-            CollisionData colData = _collisionSolver->solve(a,b);
+            printf("\tTesting %s vs %s\n", a->name(), b->name());
+            CollisionData colData = _collisionSolver->solve(a, b);
 
             if (colData.hit) {
+                col = true;
                 a->setColor(vec3(1.0f, 0.0f, 0.0f));
                 b->setColor(vec3(0.0f, 0.0f, 1.0f));
-                printf("Normal: (%f, %f, %f)\n", colData.normal.x, colData.normal.y, colData.normal.z);
                 Debug::drawLine(a->shader(), a->position(), a->position() + colData.normal, vec3(0.0f, 1.0f, 1.0f), 50.0f);
                 Debug::drawLine(b->shader(), b->position(), b->position() - colData.normal, vec3(1.0f, 1.0f, 0.0f), 50.0f);
                 Debug::drawSphere(a->shader(), a->position(), 0.05f, vec3(0.0f, 1.0f, 1.0f));
                 Debug::drawSphere(a->shader(), b->position(), 0.05f, vec3(1.0f, 1.0f, 0.0f));
                 collisions.push_back(colData);
             }
-            else {
-                a->setColor(vec3(1.0f, 1.0f, 1.0f));
-                b->setColor(vec3(1.0f, 1.0f, 1.0f));
-            }
         }
+
+        if (!col) a->setColor(vec3(1.0f, 1.0f, 1.0f));
+    }
     printf("----------\n");
 }
 

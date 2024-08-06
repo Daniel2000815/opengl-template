@@ -46,6 +46,7 @@ class Actor
         inline const std::vector<GLfloat>& normals() const { return _normals; }
         std::vector<vec3> verticesWorld() const;
         std::vector<vec3> normalsWorld() const;
+        std::vector<vec3> packedVertices() const;
 
         inline vector<GLuint>   indices()        { return _indices; }
         inline vector<GLfloat>  colors()         { return _colors; }

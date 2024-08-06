@@ -19,8 +19,6 @@ Sphere::Sphere(Shader* shader, uint16_t resolution, float radius) : Actor(shader
         _normals[3 * i + 2] = p[2];
     }
 
-    printf("vertices: %u\n", _vertices.size());
-
     _indices = c.indices();
     _texCoords = c.uv();
     _colors = c.colors();
