@@ -34,10 +34,10 @@ World::World(Window* window) {
 
     // test
     printf("TESTING\n");
-    _collisionSolver->solve(new BoxCollider(), new SphereCollider(), new Transform(), new Transform());
-    _collisionSolver->solve(new SphereCollider(), new SphereCollider(),new Transform(), new Transform());
-    _collisionSolver->solve(new SphereCollider(), new BoxCollider(), new Transform(), new Transform());
-    _collisionSolver->solve(new BoxCollider(), new BoxCollider(), new Transform(), new Transform());
+    //_collisionSolver->solve(new BoxCollider(), new SphereCollider(), new Transform(), new Transform());
+    //_collisionSolver->solve(new SphereCollider(), new SphereCollider(),new Transform(), new Transform());
+    //_collisionSolver->solve(new SphereCollider(), new BoxCollider(), new Transform(), new Transform());
+    //_collisionSolver->solve(new BoxCollider(), new BoxCollider(), new Transform(), new Transform());
 }
 
 void World::addActor(Actor* actor)
@@ -82,9 +82,7 @@ void World::solveCollisions()
             if (!a->collider() || !b->collider())   continue;
 
             printf("Testing %s vs %s\n", a->name(), b->name());
-            CollisionData colData = _collisionSolver->solve(
-                a->collider(), b->collider(), a->transform(), b->transform()
-            );
+            CollisionData colData = _collisionSolver->solve(a,b);
 
             if (colData.hit) {
                 a->setColor(vec3(1.0f, 0.0f, 0.0f));

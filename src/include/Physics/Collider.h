@@ -42,6 +42,7 @@ protected:
 
 public:
 	ColliderType type() const { return _type; }
+	virtual ~Collider() {} // Destructor virtual
 };
 
 class SphereCollider : public Collider {

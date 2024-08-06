@@ -52,8 +52,8 @@ class Actor
         inline vector<GLfloat>  uv()             { return _texCoords; }
         inline Shader*          shader()         { return _shader; }
 
-        inline const Transform*        transform()      { return _transform; }
-        inline const Collider* collider() { return _collider; }
+        inline const Transform*        transform() const     { return _transform; }
+        inline const Collider* collider() const { return _collider; }
         inline vec3             position()       { return _transform->position; }
         inline vec3             rotation()       { return _transform->rotation; }
         inline vec3             scale()          { return _transform->scale; }

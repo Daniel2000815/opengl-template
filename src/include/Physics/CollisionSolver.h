@@ -5,15 +5,18 @@
 #include <Actors/Actor.h>  // Incluye el encabezado de Transform
 #include <functional>
 
-using CollisionTest = std::function<CollisionData(const Collider*, const Collider*, const Transform*, const Transform*)>;
+using CollisionTest = std::function<CollisionData(const Actor*, const Actor*)>;
+
+class Cube;
+class Sphere;
 
 class CollisionSolver {
 public:
-    CollisionData solve(const Collider* col1, const Collider* col2, const Transform* trans1, const Transform* trans2);
+    CollisionData solve(const Actor* col1, const Actor* col2);
 
-    CollisionData testBoxSphere(const BoxCollider& p, const SphereCollider& s, const Transform& t1, const Transform& t2) const;
-    CollisionData testBoxBox(const BoxCollider& p, const BoxCollider& s, const Transform& t1, const Transform& t2) const;
-    CollisionData testSphereSphere(const SphereCollider& s1, const SphereCollider& s2, const Transform& t1, const Transform& t2) const;
+    CollisionData testCubeSphere(const Cube& p, const Sphere& s) const;
+    CollisionData testCubeCube(const Cube& p, const Cube& s) const;
+    CollisionData testSphereSphere(const Sphere& s1, const Sphere& s2) const;
 
 private:
     std::vector<vec3> boxSeparatingAxes(const BoxCollider& boxA, const BoxCollider& boxB);
