@@ -58,9 +58,9 @@ void World::solveDynamics(float delta)
 
     for (Actor*& actor : _actors) {
         //if (dynamic_cast<Cube*>(actor) != nullptr)
-        if(strcmp(actor->name(), "test2") == 0)
-            actor->setPosition(vec3(pingPong(glfwGetTime() * _timeScale * 2, -2.0f, 2.0f), actor->position().y, actor->position().z));
-        else if (strcmp(actor->name(), "test1") == 0)
+        /*if(strcmp(actor->name(), "test2") == 0)
+            actor->setPosition(vec3(pingPong(glfwGetTime() * _timeScale * 2, -2.0f, 2.0f), actor->position().y, actor->position().z));*/
+        if (strcmp(actor->name(), "test1") == 0)
             actor->setPosition(vec3(actor->position().x, pingPong(glfwGetTime() * _timeScale * 2, 0.0f, 2.0f), actor->position().z));
         //actor->setColor(vec3(sin(glfwGetTime())));
         //actor->rotate(20 * delta, glm::vec3(0, 1, 0));
@@ -89,10 +89,28 @@ void World::solveCollisions()
                 col = true;
                 a->setColor(vec3(1.0f, 0.0f, 0.0f));
                 b->setColor(vec3(0.0f, 0.0f, 1.0f));
-                Debug::drawLine(a->shader(), a->position(), a->position() + colData.normal, vec3(0.0f, 1.0f, 1.0f), 50.0f);
-                Debug::drawLine(b->shader(), b->position(), b->position() - colData.normal, vec3(1.0f, 1.0f, 0.0f), 50.0f);
-                Debug::drawSphere(a->shader(), a->position(), 0.05f, vec3(0.0f, 1.0f, 1.0f));
-                Debug::drawSphere(a->shader(), b->position(), 0.05f, vec3(1.0f, 1.0f, 0.0f));
+                //Debug::drawLine(a->shader(), colData.p1, colData.p1 + colData.normal, vec3(0.0f, 1.0f, 1.0f), 50.0f);
+                //Debug::drawLine(b->shader(), colData.p2, colData.p2 - colData.normal, vec3(1.0f, 1.0f, 0.0f), 50.0f);
+                //Debug::drawSphere(a->shader(), colData.p1, 0.05f, vec3(1.0f, 0.0f, 0.0f));
+                //Debug::drawSphere(a->shader(), colData.p2, 0.05f, vec3(0.0f, 0.0f, 1.0f));
+                Debug::drawLine(a->shader(), a->transform()->position, a->transform()->position - glm::normalize(colData.mtv), vec3(0.0f, 1.0f, 1.0f), 50.0f);
+                Debug::drawLine(b->shader(), b->transform()->position, b->transform()->position + glm::normalize(colData.mtv), vec3(1.0f, 1.0f, 0.0f), 50.0f);
+
+                //glm::vec3 relativeVelocity = b->transform()->velocity - a->transform()->velocity;
+                //float normalVelocity = glm::dot(relativeVelocity, colData.normal);
+
+                //// Calcular el impulso
+                //const float restitution = 0.8f;
+                //float impulseMagnitude = (-(1 + restitution) * normalVelocity) / (1 / a->mass() + 1 / b->mass());
+
+                //// Actualizar las velocidades
+                //glm::vec3 impulse = impulseMagnitude * colData.normal;
+                //a->addVelocity(-impulse / a->mass());
+                //b->addVelocity(+impulse / b->mass());
+
+                a->addVelocity(-0.5f * colData.mtv);
+                b->addVelocity(0.5f * colData.mtv);
+
                 collisions.push_back(colData);
             }
         }

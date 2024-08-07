@@ -22,8 +22,9 @@ struct Transform {
     vec3 position;
     vec3 scale;
     vec3 rotation;
+    vec3 velocity;
 
-    Transform() : position(0.0f), scale(1.0f), rotation(0.0f) {}
+    Transform() : position(0.0f), scale(1.0f), rotation(0.0f), velocity(0.0f) {}
 };
 
 class Actor
@@ -54,6 +55,7 @@ class Actor
         inline Shader*          shader()         { return _shader; }
 
         inline const Transform*        transform() const     { return _transform; }
+        inline float mass() const { return _mass; }
         inline const Collider* collider() const { return _collider; }
         inline vec3             position()       { return _transform->position; }
         inline vec3             rotation()       { return _transform->rotation; }
@@ -87,6 +89,8 @@ class Actor
         const Actor* rotate(float angle_degrees, vec3 axis);
         const Actor* scale(vec3 scale);
 
+        void addVelocity(vec3 v) { _transform->velocity += v; }
+
         glm::mat3 rotationMatrix() const;
         
 
@@ -101,6 +105,8 @@ class Actor
         std::string _name;
         Collider* _collider;
         Transform* _transform;
+        float _mass = 1.0f;
+
 
         GLuint _vao;
         GLuint _vertexBuffer, _colorBuffer, _indiceBuffer, _normalBuffer;

@@ -67,8 +67,9 @@ CollisionData CollisionSolver::testCubeCube(const Cube& boxA, const Cube& boxB) 
         }
     }
 
+    auto mtv = bestAxis * minPenetration;
     auto contactPoints = computeCubeContactPoints(boxA, boxB, bestAxis);
-    return CollisionData(contactPoints.first, contactPoints.second);
+    return CollisionData(contactPoints.first, contactPoints.second, mtv);
 }
 
 CollisionData CollisionSolver::testSphereSphere(const Sphere& s1, const Sphere& s2) const
@@ -87,8 +88,8 @@ CollisionData CollisionSolver::testSphereSphere(const Sphere& s1, const Sphere& 
     }
 
     vec3 normal = glm::normalize(centervector);
-
-    return CollisionData(c1->center() + normal * c1->radius(), c2->center() - normal * c2->radius());
+    vec3 mtv = normal * ((c1->radius() + c2->radius()) - glm::length(centervector));
+    return CollisionData(c1->center() + t1->position + normal * c1->radius(), c2->center() + t2->position - normal * c2->radius(), mtv);
 }
 
 std::vector<vec3> CollisionSolver::cubeSeparatingAxes(const Cube& boxA, const Cube& boxB) const

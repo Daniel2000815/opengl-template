@@ -32,6 +32,7 @@ int main()
     double lastTime = glfwGetTime();
     
     Sphere s(basicShader, 3, 0.5f);
+    Sphere s2(basicShader, 3, 0.5f);
     Sphere test1(basicShader, 4, 0.5f);
     Cylinder cyl(basicShader, 1.0f, 0.1f, 1.3f, 10);
     Cube c(basicShader, 2);
@@ -45,13 +46,16 @@ int main()
 
     c.setPosition(vec3(-2.0f, 0.0f, 0.0f));
     s.setPosition(vec3(2.0f, 0.0f, 0.0f));
+    s2.setPosition(vec3(2.0f, -2.0f, 0.0f));
     test1.setPosition(vec3(2.0f, 2.0f, 0.0f));
+    test2.setPosition(vec3(-0.7f, 0.0f, 0.5f));
     //cyl.setPosition(vec3(2.0f, 0.0f, 0.0f));
     //c.setPosition(glm::vec3(-2, 0, 0));
     /*test2.setPosition(vec3(2.0f, 0.0f, 0.0f));
     test3.setPosition(vec3(4.0f, 0.0f, 0.0f));*/
 
     world->addActor(&s);
+    world->addActor(&s2);
     world->addActor(&test2);
     world->addActor(&c);
     world->addActor(&test1);

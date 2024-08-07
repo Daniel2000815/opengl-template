@@ -17,14 +17,16 @@ enum ColliderType {
 struct CollisionData {
 	vec3 p1;		// Deepest point of A into B	
 	vec3 p2;		// Deepest point of B into A
-	vec3 normal;	
+	vec3 normal;
+	vec3 mtv;
 	float depth;
 	bool hit;
 
-	CollisionData() : p1(0.0f), p2(0.0f), normal(0.0f), depth(0.0f), hit(false) {}
-	CollisionData(vec3 p1, vec3 p2) {
+	CollisionData() : p1(0.0f), p2(0.0f), normal(0.0f), mtv(0.0f), depth(0.0f), hit(false) {}
+	CollisionData(vec3 p1, vec3 p2, vec3 mtv) {
 		this->p1 = p1;
 		this->p2 = p2;
+		this->mtv = mtv;
 		vec3 dir = p2 - p1;
 
 		normal = glm::normalize(dir);

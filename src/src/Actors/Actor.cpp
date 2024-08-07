@@ -87,6 +87,7 @@ Actor::Actor(Shader *shader)
 {
     _transform = new Transform();
     _modelMatrix = glm::mat4(1.f);
+    _mass = 1.0f;
 
     this->_shader = shader;
     this->_vertices = std::vector<GLfloat>{};
@@ -124,6 +125,10 @@ void Actor::tick(float deltaTime)
         for (int i = 0; i < _vertices.size() / 3; i++)
             Debug::drawLine(_shader, vertexWorld(i), vertexWorld(i) + 0.1f * normalWorld(i));
     }
+
+    printf("%s translating", name());
+    Utils::printVec("v", _transform->velocity);
+    translate(_transform->velocity * deltaTime);
 }
 
 
