@@ -34,6 +34,15 @@ struct CollisionData {
 		depth = dir.length();
 		hit = true;
 	}
+
+	CollisionData(vec3 normal, vec3 mtv) {
+		this->p1 = vec3(0.0f);
+		this->p2 = vec3(0.0f);
+		this->mtv = mtv;
+		this->normal = normal;
+		depth = 0.0f;
+		hit = true;
+	}
 };
 
 class Collider {

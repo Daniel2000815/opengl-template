@@ -6,6 +6,9 @@
 #include <glad/glad.h>
 #include <string>
 
+using vec3 = glm::vec3;
+class Cube;
+
 class Utils {
 public:
     // Funciones para imprimir vectores y matrices
@@ -21,6 +24,8 @@ public:
 
     template <typename T>
     static std::vector<T> combineArrays(const std::vector<T>& v1, std::vector<T>& v2);
+
+    static vec3 closestPointToCube(vec3 p, const Cube& c);
 };
 
 #endif

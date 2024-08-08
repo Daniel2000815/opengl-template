@@ -6,8 +6,11 @@
 
 class Sphere : public Actor
 {
+private:
+    float _radius;
 public:
     Sphere(Shader* shader, uint16_t resolution = 8, float radius = 1.f);
+    float radius() const;
 };
 
 #endif

@@ -3,6 +3,8 @@
 #include <Actors/Sphere.h>
 #include <Actors/Cube.h>
 #include <Actors/Line.h>
+#include <Debug.h>
+#include <Utils.h>
 
 template <typename Func, typename ColliderType1, typename ColliderType2>
 CollisionTest make_collision_test(Func func, const CollisionSolver* solver) {
@@ -40,14 +42,36 @@ CollisionData CollisionSolver::solve(const Actor* col1, const Actor* col2)
     {
         std::swap(data.p1, data.p2);
         data.normal = -data.normal;
+        data.mtv = -data.mtv;
     }
 
     return data;
 }
 
-CollisionData CollisionSolver::testCubeSphere(const Cube& p, const Sphere& s) const
+CollisionData CollisionSolver::testCubeSphere(const Cube& c, const Sphere& s) const
 {
-    return CollisionData();
+    /*const SphereCollider* sCol = dynamic_cast<const SphereCollider*>(s.collider());
+    const BoxCollider* bCol = dynamic_cast<const BoxCollider*>(c.collider());*/
+
+    glm::vec3 closestPoint = Utils::closestPointToCube(s.transform()->position, c);
+
+    Debug::drawSphere(c.shader(), closestPoint, 0.1f, vec3(0.0f));
+
+    glm::vec3 vectorToCenter =  -closestPoint + s.transform()->position;
+    float distanceSquared = glm::dot(vectorToCenter, vectorToCenter);
+
+    Debug::drawLine(c.shader(), closestPoint, closestPoint + vectorToCenter);
+    if (distanceSquared > s.radius() * s.radius()) {
+        printf("FFFFFFFF %f, %f\n", distanceSquared, s.radius() * s.radius());
+        return CollisionData(); // No hay colisión
+    }
+
+    float distance = glm::sqrt(distanceSquared);
+    glm::vec3 normal = vectorToCenter / distance;
+    float penetrationDepth = s.radius() - distance;
+    glm::vec3 mtv = normal * penetrationDepth;
+
+    return CollisionData(normal, mtv);
 }
 
 CollisionData CollisionSolver::testCubeCube(const Cube& boxA, const Cube& boxB) const
@@ -67,7 +91,7 @@ CollisionData CollisionSolver::testCubeCube(const Cube& boxA, const Cube& boxB) 
         }
     }
 
-    auto mtv = bestAxis * minPenetration;
+    auto mtv = - bestAxis * minPenetration;
     auto contactPoints = computeCubeContactPoints(boxA, boxB, bestAxis);
     return CollisionData(contactPoints.first, contactPoints.second, mtv);
 }

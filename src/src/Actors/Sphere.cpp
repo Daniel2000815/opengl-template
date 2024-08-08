@@ -3,6 +3,7 @@
 
 Sphere::Sphere(Shader* shader, uint16_t resolution, float radius) : Actor(shader, "Sphere") {
     Cube c(shader, resolution);
+    _radius = radius;
     _vertices = c.vertices();
     _normals.assign(_vertices.size(), 0.0f);
 
@@ -27,4 +28,9 @@ Sphere::Sphere(Shader* shader, uint16_t resolution, float radius) : Actor(shader
 
     bindResources();
 
+}
+
+float Sphere::radius() const
+{
+    return std::max( _radius * _transform->scale.x, std::max(_radius * _transform->scale.y, _radius * _transform->scale.z));
 }

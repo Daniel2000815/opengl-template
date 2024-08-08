@@ -52,7 +52,7 @@ class Actor
         inline vector<GLuint>   indices()        { return _indices; }
         inline vector<GLfloat>  colors()         { return _colors; }
         inline vector<GLfloat>  uv()             { return _texCoords; }
-        inline Shader*          shader()         { return _shader; }
+        inline Shader* shader() const { return _shader; };
 
         inline const Transform*        transform() const     { return _transform; }
         inline float mass() const { return _mass; }

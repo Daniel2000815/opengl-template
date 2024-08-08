@@ -60,8 +60,8 @@ void World::solveDynamics(float delta)
         //if (dynamic_cast<Cube*>(actor) != nullptr)
         /*if(strcmp(actor->name(), "test2") == 0)
             actor->setPosition(vec3(pingPong(glfwGetTime() * _timeScale * 2, -2.0f, 2.0f), actor->position().y, actor->position().z));*/
-        if (strcmp(actor->name(), "test1") == 0)
-            actor->setPosition(vec3(actor->position().x, pingPong(glfwGetTime() * _timeScale * 2, 0.0f, 2.0f), actor->position().z));
+        //if (strcmp(actor->name(), "test1") == 0)
+            //actor->setPosition(vec3(actor->position().x, pingPong(glfwGetTime() * _timeScale * 1.5f, -4.0f, 4.0f), actor->position().z));
         //actor->setColor(vec3(sin(glfwGetTime())));
         //actor->rotate(20 * delta, glm::vec3(0, 1, 0));
         //actor->setScale(vec3(pingPong(glfwGetTime() * _timeScale * 0.2f, 0.5f, 1.5f)));
