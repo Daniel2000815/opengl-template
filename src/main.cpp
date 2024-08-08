@@ -20,28 +20,16 @@
 
 using namespace std;
 
-int main()
-{
-    Window* window = new Window();
-    World* world = new World(window);
-    UI* ui = new UI(world, window);
-    Camera* camera = new Camera(window, ui);
-    Shader* gridShader = new Shader(camera, window, "./Shaders/grid.glsl");
-    Shader* basicShader = new Shader(camera, window);
+void testScene1(World& world, Shader* shader, Camera* cam) {
+    static Sphere s1(shader, 3, 0.5f);
+    static Sphere s2(shader, 3, 0.5f);
 
-    double lastTime = glfwGetTime();
-    
-    Sphere s1(basicShader, 3, 0.5f);
-    Sphere s2(basicShader, 3, 0.5f);
-    
-    Cylinder cyl(basicShader, 1.0f, 0.1f, 1.3f, 10);
-    
-    Cube c1(basicShader, 2);
-    Cube c2(basicShader, 2);
-    Cube c3(basicShader, 2);
-    //Cylinder test1(basicShader, 1.0f, 0.4f, 1.3f, 10);
-    //Cylinder test2(basicShader, 1.0f, 1.0f, 1.3f, 10);
-    //Cylinder test3(basicShader, 1.0f, 1.4f, 1.3f, 10);
+    static Cube c1(shader, 2);
+    static Cube c2(shader, 2);
+    static Cube c3(shader, 2);
+
+    cam->setPosition(vec3(3.0f, 3.0f, 5.0f));
+    cam->rotate(3.6f, -0.5f);
 
     c1.setName("c1");
     c2.setName("c2");
@@ -55,34 +43,55 @@ int main()
     s1.setPosition(vec3(0.0f, 0.0f, 0.0f));
     s2.setPosition(vec3(2.0f, 0.0f, 0.0f));
 
-    //c1.addVelocity(vec3(1.0f, 0.0f, 0.0f));
     c3.addVelocity(vec3(-1.0f, 0.0f, 0.0f));
-    //cyl.setPosition(vec3(2.0f, 0.0f, 0.0f));
-    //c.setPosition(glm::vec3(-2, 0, 0));
-    /*test2.setPosition(vec3(2.0f, 0.0f, 0.0f));
-    test3.setPosition(vec3(4.0f, 0.0f, 0.0f));*/
 
-    //world->addActor(&s);
-    //world->addActor(&s2);
-    //world->addActor(&test2);
-    world->addActor(&c1);
-    world->addActor(&c2);
-    world->addActor(&c3);
-    world->addActor(&s1);
-    world->addActor(&s2);
+    world.addActor(&c1);
+    world.addActor(&c2);
+    world.addActor(&c3);
+    world.addActor(&s1);
+    world.addActor(&s2);
+}
 
-    //Plane p(gridShader, vec3(0,0,0), vec3(1,0,0), vec3(0,0,-1));
-    
-    //Line l(basicShader, vec3(.0f, -.5f, .0f), vec3(.0f, .5f, .0f),  vec3(1, 0, 0), 10.0f);
+void testScene2(World& world, Shader* shader, Camera* cam) {
+    static Sphere s(shader, 3, 0.5f);
 
-    //s.setPosition(glm::vec3(-2, 0, 0));
-    //l.setPosition(glm::vec3(2, 0, 0));
-    /*c.setPosition(glm::vec3(2, 0, 0));
-    p.setScale(vec3(10));
-    p.setPosition(vec3(-5, -1, 5));*/
-    //world->addActor(&c);
-    //world->addActor(&s);
-    //world->addActor(&p);
+    static Cube c1(shader, 2);
+    static Cube c2(shader, 2);
+
+    cam->setPosition(vec3(4.0f, 1.0f, 4.0f));
+    cam->setRotation(-2.5, -0.1);
+
+    c1.setName("floor");
+    c2.setName("ground");
+    s.setName("sphere");
+
+    c1.setKinematic(true);
+    c2.setKinematic(true);
+
+    c1.rotate(-0.15f, vec3(0, 0, 1));
+
+    c1.scale(vec3(30.0f, 0.3f, 10.0f));
+    c2.scale(vec3(30.0f, 0.3f, 10.0f));
+
+    c1.setPosition(vec3(2.0f, -2.0f, 0.0f));
+    c2.setPosition(vec3(0.0f, 2.0f, 0.0f));
+
+    s.addVelocity(vec3(0.0f, -3.0f, 0.0f));
+
+    world.addActors(&c1, &c2, &s);
+
+}
+
+int main()
+{
+    Window* window = new Window();
+    World* world = new World(window);
+    UI* ui = new UI(world, window);
+    Camera* camera = new Camera(window, ui);
+    Shader* gridShader = new Shader(camera, window, "./Shaders/grid.glsl");
+    Shader* basicShader = new Shader(camera, window);
+
+    double lastTime = glfwGetTime();
     
     bool paused = false;
     window->onKey([&paused, &lastTime](GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -93,6 +102,7 @@ int main()
             lastTime = glfwGetTime();
     });
     
+    testScene2(*world, basicShader, camera);
     while(!window->shouldClose())
     {
         if (!paused) {
@@ -117,9 +127,9 @@ int main()
             //for (int i=0; i<c.vertices().size()/3; i++)
             //    Debug::drawLine(c.shader(), c.vertexWorld(i), c.vertexWorld(i) + 0.1f * c.normalWorld(i), vec3(0.0f, 1.0f, 0.0f), 4.0f);
             
-            Debug::drawLine(c1.shader(), vec3(0.0f), vec3(100.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 5.0f);
-            Debug::drawLine(c1.shader(), vec3(0.0f), vec3(0.0f, 100.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), 5.0f);
-            Debug::drawLine(c1.shader(), vec3(0.0f), vec3(0.0f, 0.0f, 100.0f), vec3(0.0f, 0.0f, 1.0f), 5.0f);
+            Debug::drawLine(basicShader, vec3(0.0f), vec3(100.0f, 0.0f, 0.0f), vec3(1.0f, 0.0f, 0.0f), 5.0f);
+            Debug::drawLine(basicShader, vec3(0.0f), vec3(0.0f, 100.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f), 5.0f);
+            Debug::drawLine(basicShader, vec3(0.0f), vec3(0.0f, 0.0f, 100.0f), vec3(0.0f, 0.0f, 1.0f), 5.0f);
             //Debug::drawLine(c.shader(), vec3(0.0f, 0.0f, 0.0f), c.normalWorld(0), vec3(1.0f, 0.0f, 1.0f), 5.0f);
             
             world->tick(deltaTime);

@@ -56,7 +56,7 @@ Cube::Cube(Shader* shader, uint16_t resolution) : Actor(shader, "Cube") {
 	drawFace(glm::vec3(-0.5f, -0.5f, +0.5f), glm::vec3(0.f, 0.f, -1.f), glm::vec3(+1.f,0.f,0.f), glm::vec2(resolution, resolution));
 
     _colors.assign(_vertices.size(), 1.f);
-    _renderMode = Shader::RenderMode::Color;
+    _renderMode = Shader::RenderMode::Normal;
     _collider = new BoxCollider(vec3(0.0f), _transform->scale);
 
     bindResources();

@@ -28,7 +28,7 @@ public:
     const glm::mat4 viewMatrix() const;
 
     void rotate(double horizontalDelta, double verticalDelta);
-
+    void setRotation(double horizontal, double vertical);
     void tick(float delta);
 
 private:

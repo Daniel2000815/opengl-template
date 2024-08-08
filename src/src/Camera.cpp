@@ -1,9 +1,9 @@
 #include "Camera.h"
 
 Camera::Camera(Window* window, UI* ui) :
-    _position(3.0f, 3.0f, 5.0f),
-    _horizontalAngle(3.6f),
-    _verticalAngle(-0.5f),
+    _position(0.0f, 0.0f, 0.0f),
+    _horizontalAngle(0.0f),
+    _verticalAngle(0.0f),
     _fov(45.0f),
     _mouseMoving(false)
 {
@@ -31,19 +31,28 @@ void Camera::rotate(double horizontalDelta, double verticalDelta)
 {
     _horizontalAngle += _rotateSpeed * horizontalDelta;
     _verticalAngle += _rotateSpeed * verticalDelta;
+    printf("camera %f, %f", _horizontalAngle, _verticalAngle);
     
+    setRotation(_horizontalAngle, _verticalAngle);
+}
+
+void Camera::setRotation(double horizontal, double vertical)
+{
+    _horizontalAngle = horizontal;
+    _verticalAngle = vertical;
+
     _forward = glm::vec3(
-        cos(_verticalAngle) * sin(_horizontalAngle),
-        sin(_verticalAngle),
-        cos(_verticalAngle) * cos(_horizontalAngle)
+        cos(vertical) * sin(horizontal),
+        sin(vertical),
+        cos(vertical) * cos(horizontal)
     );
-    
+
     _right = glm::vec3(
-        sin(_horizontalAngle - 3.14f / 2.0f),
+        sin(horizontal - 3.14f / 2.0f),
         0,
-        cos(_horizontalAngle - 3.14f / 2.0f)
+        cos(horizontal - 3.14f / 2.0f)
     );
-    
+
     _up = glm::cross(_right, _forward);
 }
 

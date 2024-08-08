@@ -30,6 +30,11 @@ public:
 
     void addActor(Actor* actor);
 
+    template<typename... Actors>
+    void addActors(Actors... actors) {
+        (addActor(actors), ...);
+    }
+
     void setPhysicsFPS(int fps) { _physicsFPS = fps; _physicsStep = 1.0f / fps; };
     int physicsFPS() { return _physicsFPS; };
     void setTimeScale(int scale) { _timeScale = scale; };

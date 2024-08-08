@@ -56,6 +56,7 @@ class Actor
 
         inline const Transform*        transform() const     { return _transform; }
         inline float mass() const { return _mass; }
+        inline float kinematic() const { return _kinematic; }
         inline const Collider* collider() const { return _collider; }
         inline vec3             position()       { return _transform->position; }
         inline vec3             rotation()       { return _transform->rotation; }
@@ -83,13 +84,14 @@ class Actor
         void setRenderMode(Shader::RenderMode renderMode);
         void setModelMatrix(mat4 m) { _modelMatrix = m; }
         void setName(std::string name);
+        void setKinematic(bool kinematic) { _kinematic = kinematic; }
 
         // Transform
         const Actor* translate(vec3 translation);
         const Actor* rotate(float angle_degrees, vec3 axis);
         const Actor* scale(vec3 scale);
 
-        void addVelocity(vec3 v) { _transform->velocity += v; }
+        void addVelocity(vec3 v);
 
         glm::mat3 rotationMatrix() const;
         
@@ -105,6 +107,7 @@ class Actor
         std::string _name;
         Collider* _collider;
         Transform* _transform;
+        bool _kinematic = false;
         float _mass = 1.0f;
 
 

@@ -82,7 +82,7 @@ void World::solveCollisions()
             if (a == b) break;
             if (!a->collider() || !b->collider())   continue;
 
-            printf("\tTesting %s vs %s\n", a->name(), b->name());
+            //printf("\tTesting %s vs %s\n", a->name(), b->name());
             CollisionData colData = _collisionSolver->solve(a, b);
 
             if (colData.hit) {
@@ -108,8 +108,8 @@ void World::solveCollisions()
                 //a->addVelocity(-impulse / a->mass());
                 //b->addVelocity(+impulse / b->mass());
 
-                a->addVelocity(-0.5f * colData.mtv);
-                b->addVelocity(0.5f * colData.mtv);
+                a->addVelocity(-(b->kinematic() ? 1.0f : 0.5f) * colData.mtv);
+                b->addVelocity(+(a->kinematic() ? 1.0f : 0.5f) * colData.mtv);
 
                 collisions.push_back(colData);
             }

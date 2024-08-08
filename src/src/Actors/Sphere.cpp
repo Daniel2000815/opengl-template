@@ -23,7 +23,7 @@ Sphere::Sphere(Shader* shader, uint16_t resolution, float radius) : Actor(shader
     _indices = c.indices();
     _texCoords = c.uv();
     _colors = c.colors();
-    _renderMode = Shader::RenderMode::Color;
+    _renderMode = Shader::RenderMode::Normal;
     _collider = new SphereCollider(vec3(0.0f), radius);
 
     bindResources();
