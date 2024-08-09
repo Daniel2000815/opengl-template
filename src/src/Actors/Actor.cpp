@@ -184,7 +184,7 @@ const Actor* Actor::scale(glm::vec3 scale) {
 
 void Actor::setColor(vec3 color)
 {
-    for (uint16_t i = 0; i < _colors.size()/3; i++) {
+    for (uint16_t i = 0; i < _colors.size() / 3; i++) {
         _colors[3 * i] = color.x;
         _colors[3 * i + 1] = color.y;
         _colors[3 * i + 2] = color.z;
@@ -192,6 +192,7 @@ void Actor::setColor(vec3 color)
 
     glBindBuffer(GL_ARRAY_BUFFER, _colorBuffer);
     glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(GLfloat), _colors.data(), GL_STATIC_DRAW);
+}
 
 void Actor::setVertex(size_t idx, vec3 localPosition)
 {
