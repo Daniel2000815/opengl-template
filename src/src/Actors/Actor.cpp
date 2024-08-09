@@ -192,7 +192,6 @@ void Actor::setColor(vec3 color)
 
     glBindBuffer(GL_ARRAY_BUFFER, _colorBuffer);
     glBufferData(GL_ARRAY_BUFFER, _colors.size() * sizeof(GLfloat), _colors.data(), GL_STATIC_DRAW);
-}
 
 void Actor::setVertex(size_t idx, vec3 localPosition)
 {
