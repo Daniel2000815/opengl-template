@@ -1,8 +1,8 @@
 #include <Actors/Cube.h>
 #include <Actors/Plane.h>
 #include <iostream>
+#include <Utils.h>
 #include "stb_image.h"
-
 
 void Cube::drawFace(glm::vec3 startPoint, glm::vec3 v1, glm::vec3 v2, glm::vec2 resolution)
 {
@@ -53,12 +53,35 @@ Cube::Cube(Shader* shader, uint16_t resolution) : Actor(shader, "Cube") {
 	// back
 	drawFace(glm::vec3(+0.5f, -0.5f, -0.5f), glm::vec3(-1.f,0.f,0.f), glm::vec3(0.f,1.f,0.f), glm::vec2(resolution, resolution));
 	// bottom
-	drawFace(glm::vec3(-0.5f, -0.5f, +0.5f), glm::vec3(+1.f,0.f,0.f), glm::vec3(0.f,0.f,-1.f), glm::vec2(resolution, resolution));
+	drawFace(glm::vec3(-0.5f, -0.5f, +0.5f), glm::vec3(0.f, 0.f, -1.f), glm::vec3(+1.f,0.f,0.f), glm::vec2(resolution, resolution));
 
     _colors.assign(_vertices.size(), 1.f);
     _renderMode = Shader::RenderMode::Normal;
+    _collider = new BoxCollider(vec3(0.0f), _transform->scale);
 
     bindResources();
 }
 
+std::vector<glm::vec3> Cube::corners()
+{
+    auto orientation = rotationMatrix();
+    std::vector<vec3> vertices;
+    for (int i = -1; i <= 1; i += 2) {
+        for (int j = -1; j <= 1; j += 2) {
+            for (int k = -1; k <= 1; k += 2) {
+                vec3 corner = _transform->position + glm::vec3(
+                    i * _transform->scale.x / 2,
+                    j * _transform->scale.y / 2,
+                    k * _transform->scale.z / 2);
+
+                glm::vec4 p = modelMatrix() * glm::vec4(corner, 1.0f);
+                vec3 norm_p = vec3(p.x, p.y, p.z) / p.w;
+                vertices.push_back(norm_p);
+            }
+        }
+    }
+
+
+    return vertices;
+}
 

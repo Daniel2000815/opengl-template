@@ -23,5 +23,6 @@ void main(){
     uv = texCoord;
 
     mat3 norm_matrix = transpose(inverse(mat3(mvp)));
-    normalVector = normalize(norm_matrix * normal);
+    // normalVector = normalize(norm_matrix * normal);
+    normalVector = normal;
 }

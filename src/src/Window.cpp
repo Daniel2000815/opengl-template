@@ -18,6 +18,7 @@ void Window::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 
 void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+
     for (auto& f : _key_callbacks)
         f(window, key, scancode, action, mods);
 }
