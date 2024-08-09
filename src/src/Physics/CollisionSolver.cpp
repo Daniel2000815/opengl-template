@@ -55,12 +55,12 @@ CollisionData CollisionSolver::testCubeSphere(const Cube& c, const Sphere& s) co
 
     glm::vec3 closestPoint = Utils::closestPointToCube(s.transform()->position, c);
 
-    Debug::drawSphere(c.shader(), closestPoint, 0.1f, vec3(0.0f));
+    //Debug::drawSphere(c.shader(), closestPoint, 0.1f, vec3(0.0f));
 
     glm::vec3 vectorToCenter =  -closestPoint + s.transform()->position;
     float distanceSquared = glm::dot(vectorToCenter, vectorToCenter);
 
-    Debug::drawLine(c.shader(), closestPoint, closestPoint + vectorToCenter);
+    //Debug::drawLine(c.shader(), closestPoint, closestPoint + vectorToCenter);
     if (distanceSquared > s.radius() * s.radius()) {
         printf("FFFFFFFF %f, %f\n", distanceSquared, s.radius() * s.radius());
         return CollisionData(); // No hay colisión

@@ -32,6 +32,8 @@ World::World(Window* window) {
 
     _collisionSolver = new CollisionSolver();
 
+    _gravity = vec3(0.0f);
+
     // test
     //printf("TESTING\n");
     //_collisionSolver->solve(new BoxCollider(), new SphereCollider(), new Transform(), new Transform());
@@ -57,6 +59,7 @@ void World::solveDynamics(float delta)
         };
 
     for (Actor*& actor : _actors) {
+        actor->addVelocity(_gravity / actor->mass() * delta);
         //if (dynamic_cast<Cube*>(actor) != nullptr)
         /*if(strcmp(actor->name(), "test2") == 0)
             actor->setPosition(vec3(pingPong(glfwGetTime() * _timeScale * 2, -2.0f, 2.0f), actor->position().y, actor->position().z));*/
@@ -78,23 +81,21 @@ void World::solveCollisions()
         bool col = false;
         for (Actor* b : _actors)
         {
-
             if (a == b) break;
             if (!a->collider() || !b->collider())   continue;
 
-            //printf("\tTesting %s vs %s\n", a->name(), b->name());
             CollisionData colData = _collisionSolver->solve(a, b);
 
             if (colData.hit) {
                 col = true;
-                a->setColor(vec3(1.0f, 0.0f, 0.0f));
-                b->setColor(vec3(0.0f, 0.0f, 1.0f));
-                //Debug::drawLine(a->shader(), colData.p1, colData.p1 + colData.normal, vec3(0.0f, 1.0f, 1.0f), 50.0f);
-                //Debug::drawLine(b->shader(), colData.p2, colData.p2 - colData.normal, vec3(1.0f, 1.0f, 0.0f), 50.0f);
+                /*a->setColor(vec3(1.0f, 0.0f, 0.0f));
+                b->setColor(vec3(0.0f, 0.0f, 1.0f));*/
+                Debug::drawLine(a->shader(), colData.p1, colData.p1 + colData.normal, vec3(0.0f, 1.0f, 1.0f), 50.0f);
+                Debug::drawLine(b->shader(), colData.p2, colData.p2 - colData.normal, vec3(1.0f, 1.0f, 0.0f), 50.0f);
                 //Debug::drawSphere(a->shader(), colData.p1, 0.05f, vec3(1.0f, 0.0f, 0.0f));
                 //Debug::drawSphere(a->shader(), colData.p2, 0.05f, vec3(0.0f, 0.0f, 1.0f));
-                Debug::drawLine(a->shader(), a->transform()->position, a->transform()->position - glm::normalize(colData.mtv), vec3(0.0f, 1.0f, 1.0f), 50.0f);
-                Debug::drawLine(b->shader(), b->transform()->position, b->transform()->position + glm::normalize(colData.mtv), vec3(1.0f, 1.0f, 0.0f), 50.0f);
+                /*Debug::drawLine(a->shader(), a->transform()->position, a->transform()->position - glm::normalize(colData.mtv), vec3(0.0f, 1.0f, 1.0f), 50.0f);
+                Debug::drawLine(b->shader(), b->transform()->position, b->transform()->position + glm::normalize(colData.mtv), vec3(1.0f, 1.0f, 0.0f), 50.0f);*/
 
                 //glm::vec3 relativeVelocity = b->transform()->velocity - a->transform()->velocity;
                 //float normalVelocity = glm::dot(relativeVelocity, colData.normal);
@@ -115,7 +116,7 @@ void World::solveCollisions()
             }
         }
 
-        if (!col) a->setColor(vec3(1.0f, 1.0f, 1.0f));
+        //if (!col) a->setColor(vec3(1.0f, 1.0f, 1.0f));
     }
     printf("----------\n");
 }

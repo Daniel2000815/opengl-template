@@ -29,7 +29,13 @@ void testScene1(World& world, Shader* shader, Camera* cam) {
     static Cube c3(shader, 2);
 
     cam->setPosition(vec3(3.0f, 3.0f, 5.0f));
-    cam->rotate(3.6f, -0.5f);
+    cam->setRotation(3.6f, -0.5f);
+
+    c1.setColor(vec3(1, 0, 0));
+    c2.setColor(vec3(1, 1, 0));
+    c3.setColor(vec3(1, 0, 1));
+    s1.setColor(vec3(1, 1, 1));
+    s2.setColor(vec3(0, 1, 1));
 
     c1.setName("c1");
     c2.setName("c2");
@@ -79,7 +85,27 @@ void testScene2(World& world, Shader* shader, Camera* cam) {
     s.addVelocity(vec3(0.0f, -3.0f, 0.0f));
 
     world.addActors(&c1, &c2, &s);
+}
 
+void testScene3(World& world, Shader* shader, Camera* cam) {
+    static Sphere s(shader, 3, 0.5f);
+
+    static Cube c1(shader, 2);
+
+    world.setGravity(vec3(0.0f, -9.8f, 0.0f));
+
+    cam->setPosition(vec3(4.0f, 1.0f, 4.0f));
+    cam->setRotation(-2.5, -0.1);
+
+    c1.setName("ground");
+    s.setName("sphere");
+
+    c1.setKinematic(true);
+
+    c1.scale(vec3(30.0f, 0.3f, 10.0f));
+    c1.setPosition(vec3(0, -2, 0));
+
+    world.addActors(&c1, &s);
 }
 
 int main()
@@ -102,7 +128,7 @@ int main()
             lastTime = glfwGetTime();
     });
     
-    testScene2(*world, basicShader, camera);
+    testScene1(*world, basicShader, camera);
     while(!window->shouldClose())
     {
         if (!paused) {
