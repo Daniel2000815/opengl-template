@@ -48,6 +48,14 @@ Sphere* Debug::getNextSphere(Shader* shader) {
     return newSphere;
 }
 
+void Debug::actorVertices(Actor* actor)
+{
+    for(vec3 v : actor->verticesWorld())
+    {
+        drawSphere(actor->shader(), v, 0.1f, vec3(1, 0, 0));
+    }
+}
+
 void Debug::tick(float deltaTime) {
     glClear(GL_DEPTH_BUFFER_BIT);
     renderDebugObjects(deltaTime);

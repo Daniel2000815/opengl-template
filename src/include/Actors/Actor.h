@@ -12,6 +12,7 @@
 
 
 using vec3 = glm::vec3;
+using mat3 = glm::mat3;
 using mat4 = glm::mat4;
 using std::vector;
 
@@ -23,16 +24,18 @@ struct Transform {
     vec3 scale;
     vec3 rotation;
     vec3 velocity;
+    vec3 angularVelocity;
 
-    Transform() : position(0.0f), scale(1.0f), rotation(0.0f), velocity(0.0f) {}
+    Transform() : position(0.0f), scale(1.0f), rotation(0.0f), velocity(0.0f), angularVelocity(0.0f) {}
 };
 
 class Actor
 {
     private:
         std::string _texturePath;
-
         std::vector<Line*> debugNormals;
+
+        bool _modelMatrixDirty = false;
         
     public:
         // Constructors
@@ -63,7 +66,7 @@ class Actor
         inline vec3             rotation()       { return _transform->rotation; }
         inline vec3             scale()          { return _transform->scale; }
         inline mat4             modelMatrix() const   { return _modelMatrix; }
-        inline const char*      name()           { return _name.c_str(); }
+        inline const char*      name()  const         { return _name.c_str(); }
         
         inline vec3 vertex(int vertexIdx) const {
             return vec3(_vertices[3 * vertexIdx], _vertices[3 * vertexIdx + 1], _vertices[3 * vertexIdx + 2]);
@@ -90,11 +93,15 @@ class Actor
         void setElasticity(float e) { _elasticity = e; }
 
         // Transform
+        void updateModelMatrix();
         const Actor* translate(vec3 translation);
-        const Actor* rotate(float angle_degrees, vec3 axis);
+        const Actor* rotate(vec3 angle_radians);
         const Actor* scale(vec3 scale);
 
+        virtual mat3 inertiaTensor() const = 0;
+
         void addVelocity(vec3 v);
+        void addTorque(vec3 v);
 
         glm::mat3 rotationMatrix() const;
         

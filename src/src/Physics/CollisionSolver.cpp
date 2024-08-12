@@ -40,6 +40,7 @@ std::pair<vec3, float> CollisionSolver::solve(const Actor* col1, const Actor* co
     if (!data.hit)
         return std::make_pair(vec3(0.0f), 0.0f);
 
+    printf("COLLISION %s %s", col1->name(), col2->name());
     if (swap)
     {
         std::swap(data.p1, data.p2);
@@ -101,6 +102,8 @@ CollisionData CollisionSolver::testCubeCube(const Cube& boxA, const Cube& boxB) 
 
     auto mtv = - bestAxis * minPenetration;
     auto contactPoints = computeCubeContactPoints(boxA, boxB, bestAxis);
+
+    Debug::drawLine(boxA.shader(), contactPoints.first, contactPoints.second);
     return CollisionData(contactPoints.first, contactPoints.second, mtv);
 }
 

@@ -44,7 +44,13 @@ World::World(Window* window) {
 
 void World::addActor(Actor* actor)
 {
+    // TODO; check better solution
+    // Otherwise on first frame cubes collide with each other,
+    // since collision test uses model matrix
+    actor->updateModelMatrix();
+
     _actors.push_back(actor);
+
 }
 
 void World::solveDynamics(float delta)
@@ -75,7 +81,6 @@ void World::solveDynamics(float delta)
 void World::solveCollisions()
 {
 
-    printf("a----------\n");
     for (Actor* a : _actors) {
         bool col = false;
         for (Actor* b : _actors)
@@ -86,13 +91,12 @@ void World::solveCollisions()
             //CollisionData colData = _collisionSolver->solve(a, b);
             std::pair<vec3, float> colResponse = _collisionSolver->solve(a, b);
 
-            a->addVelocity(-colResponse.first / a->mass());
-            b->addVelocity(+colResponse.first / b->mass());            
+            a->addVelocity(-colResponse.first);
+            b->addVelocity(+colResponse.first);            
         }
 
         //if (!col) a->setColor(vec3(1.0f, 1.0f, 1.0f));
     }
-    printf("----------\n");
 }
 
 void World::tick(float deltaTime) {

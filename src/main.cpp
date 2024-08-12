@@ -20,7 +20,7 @@
 
 using namespace std;
 
-void testScene1(World& world, Shader* shader, Camera* cam) {
+Actor& testScene1(World& world, Shader* shader, Camera* cam) {
     static Sphere s1(shader, 3, 0.5f);
     static Sphere s2(shader, 3, 0.5f);
 
@@ -55,13 +55,15 @@ void testScene1(World& world, Shader* shader, Camera* cam) {
     s1.setElasticity(0.7f); s1.setMass(2.0f);
     s2.setElasticity(1.0f); s2.setMass(2.0f);
 
-    c3.addVelocity(vec3(-6.0f, 0.0f, 0.0f));
+    c3.addVelocity(vec3(-2.0f, 0.0f, 0.0f));
 
     world.addActor(&c1);
     world.addActor(&c2);
     world.addActor(&c3);
     world.addActor(&s1);
     world.addActor(&s2);
+
+    return c2;
 }
 
 void testScene2(World& world, Shader* shader, Camera* cam) {
@@ -80,7 +82,7 @@ void testScene2(World& world, Shader* shader, Camera* cam) {
     c1.setKinematic(true);
     c2.setKinematic(true);
 
-    c1.rotate(-0.15f, vec3(0, 0, 1));
+    c1.rotate(vec3(0, 0, -0.15f));
 
     c1.scale(vec3(30.0f, 0.3f, 10.0f));
     c2.scale(vec3(30.0f, 0.3f, 10.0f));
@@ -115,6 +117,17 @@ void testScene3(World& world, Shader* shader, Camera* cam) {
     world.addActors(&c1, &s);
 }
 
+void testScene4(World& world, Shader* shader, Camera* cam) {
+    static Cube c1(shader, 2);
+
+    cam->setPosition(vec3(4.0f, 1.0f, 4.0f));
+    cam->setRotation(-2.5, -0.1);
+
+    c1.setName("Cube");
+
+    world.addActors(&c1);
+}
+
 int main()
 {
     Window* window = new Window();
@@ -135,7 +148,7 @@ int main()
             lastTime = glfwGetTime();
     });
     
-    testScene3(*world, basicShader, camera);
+    Actor& a = testScene1(*world, basicShader, camera);
     while(!window->shouldClose())
     {
         if (!paused) {
@@ -169,6 +182,7 @@ int main()
             ui->tick();
             Debug::tick(deltaTime);
         }
+        
 
         window->swap();
     }

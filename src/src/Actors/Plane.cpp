@@ -41,3 +41,21 @@ Plane::Plane(Shader *shader, glm::vec3 startPoint, glm::vec3 right, glm::vec3 up
 
     bindResources();
 }
+
+mat3 Plane::inertiaTensor() const
+{
+    const float width = _transform->scale.x;
+    const float depth = _transform->scale.z;
+
+    float I_x = (1.0f / 12.0f) * _mass * (depth * depth);
+    float I_y = (1.0f / 12.0f) * _mass * (width * width + depth * depth);
+    float I_z = (1.0f / 12.0f) * _mass * (width * width);
+
+    glm::mat3 inertiaMatrixLocal = glm::mat3(
+        I_x, 0.0f, 0.0f,
+        0.0f, I_y, 0.0f,
+        0.0f, 0.0f, I_z
+    );
+
+    return rotationMatrix() * inertiaMatrixLocal * glm::transpose(rotationMatrix());
+}

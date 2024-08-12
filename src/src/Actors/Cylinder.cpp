@@ -3,6 +3,10 @@
 // https://gist.github.com/Pikachuxxxx/a2454e98bb7723afd7251a891c18f194
 Cylinder::Cylinder(Shader* shader, float baseRadius, float topRadius, float height, int sectorCount) : Actor(shader, "Cylinder")
 {
+    _baseRadius = baseRadius;
+    _topRadius = topRadius;
+    _height = height;
+
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
     std::vector<unsigned int> indices;
@@ -107,4 +111,19 @@ Cylinder::Cylinder(Shader* shader, float baseRadius, float topRadius, float heig
     _renderMode = Shader::RenderMode::Normal;
 
     bindResources();
+}
+
+mat3 Cylinder::inertiaTensor() const
+{
+    // Only accurate for cylinders (not cones)
+    float I_xz = (1.0f / 12.0f) * _mass * (3.0f * _baseRadius * _baseRadius + _height*_height);
+    float I_y = 0.5f * _mass * _baseRadius * _baseRadius;
+
+    glm::mat3 inertiaMatrixLocal = glm::mat3(
+        I_xz, 0.0f, 0.0f,
+        0.0f, I_y, 0.0f,
+        0.0f, 0.0f, I_xz
+    );
+
+    return rotationMatrix() * inertiaMatrixLocal * glm::transpose(rotationMatrix());
 }
