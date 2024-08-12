@@ -49,7 +49,13 @@ void testScene1(World& world, Shader* shader, Camera* cam) {
     s1.setPosition(vec3(0.0f, 0.0f, 0.0f));
     s2.setPosition(vec3(2.0f, 0.0f, 0.0f));
 
-    c3.addVelocity(vec3(-1.0f, 0.0f, 0.0f));
+    c1.setElasticity(0.0f); c1.setMass(0.5f);
+    c2.setElasticity(0.2f); c2.setMass(1.0f);
+    c3.setElasticity(0.4f); c3.setMass(1.2f);
+    s1.setElasticity(0.7f); s1.setMass(2.0f);
+    s2.setElasticity(1.0f); s2.setMass(2.0f);
+
+    c3.addVelocity(vec3(-6.0f, 0.0f, 0.0f));
 
     world.addActor(&c1);
     world.addActor(&c2);
@@ -101,6 +107,7 @@ void testScene3(World& world, Shader* shader, Camera* cam) {
     s.setName("sphere");
 
     c1.setKinematic(true);
+    s.setElasticity(3.0f);
 
     c1.scale(vec3(30.0f, 0.3f, 10.0f));
     c1.setPosition(vec3(0, -2, 0));
@@ -128,7 +135,7 @@ int main()
             lastTime = glfwGetTime();
     });
     
-    testScene1(*world, basicShader, camera);
+    testScene3(*world, basicShader, camera);
     while(!window->shouldClose())
     {
         if (!paused) {

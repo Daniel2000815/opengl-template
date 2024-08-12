@@ -88,6 +88,7 @@ Actor::Actor(Shader *shader)
     _transform = new Transform();
     _modelMatrix = glm::mat4(1.f);
     _mass = 1.0f;
+    _elasticity = 1.0f;
     _kinematic = false;
 
     this->_shader = shader;

@@ -17,7 +17,7 @@ CollisionTest make_collision_test(Func func, const CollisionSolver* solver) {
 }
 
 // https://winter.dev/articles/physics-engine
-CollisionData CollisionSolver::solve(const Actor* col1, const Actor* col2)
+std::pair<vec3, float> CollisionSolver::solve(const Actor* col1, const Actor* col2)
 {
     static const CollisionTest tests[ColliderType::N][ColliderType::N] =
     {
@@ -37,6 +37,8 @@ CollisionData CollisionSolver::solve(const Actor* col1, const Actor* col2)
     }
 
     CollisionData data = tests[col1->collider()->type()][col2->collider()->type()](col1, col2);
+    if (!data.hit)
+        return std::make_pair(vec3(0.0f), 0.0f);
 
     if (swap)
     {
@@ -45,7 +47,13 @@ CollisionData CollisionSolver::solve(const Actor* col1, const Actor* col2)
         data.mtv = -data.mtv;
     }
 
-    return data;
+    float velocityAlongNormal = (swap ? -1 : 1) * glm::dot(col2->transform()->velocity - col1->transform()->velocity, data.normal);
+    float elasticity = (col2->elasticity() + col1->elasticity()) / 2.0f;
+    printf("ELASTIC %f", elasticity);
+    float impulseMagnitude = (-(1.0f + elasticity) * velocityAlongNormal) / ((1 / col1->mass() + 1 / col2->mass()));
+
+    Utils::printVec("final", impulseMagnitude * data.normal);
+    return std::make_pair(impulseMagnitude * data.normal, 0.0f);
 }
 
 CollisionData CollisionSolver::testCubeSphere(const Cube& c, const Sphere& s) const

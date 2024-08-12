@@ -56,6 +56,7 @@ class Actor
 
         inline const Transform*        transform() const     { return _transform; }
         inline float mass() const { return _mass; }
+        inline float elasticity() const { return _elasticity; }
         inline float kinematic() const { return _kinematic; }
         inline const Collider* collider() const { return _collider; }
         inline vec3             position()       { return _transform->position; }
@@ -85,6 +86,8 @@ class Actor
         void setModelMatrix(mat4 m) { _modelMatrix = m; }
         void setName(std::string name);
         void setKinematic(bool kinematic) { _kinematic = kinematic; }
+        void setMass(float m) { _mass = m; }
+        void setElasticity(float e) { _elasticity = e; }
 
         // Transform
         const Actor* translate(vec3 translation);
@@ -109,6 +112,7 @@ class Actor
         Transform* _transform;
         bool _kinematic = false;
         float _mass = 1.0f;
+        float _elasticity = 1.0f;   // [0,1]
 
 
         GLuint _vao;
