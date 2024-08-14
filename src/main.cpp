@@ -184,7 +184,7 @@ int main()
             lastTime = glfwGetTime();
     });
     
-    testScene2(*world, basicShader, camera);
+    testScene1(*world, basicShader, camera);
     while(!window->shouldClose())
     {
         if (!paused) {
