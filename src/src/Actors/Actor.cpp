@@ -131,7 +131,8 @@ void Actor::tick(float deltaTime)
 
     translate(_transform->velocity * deltaTime);
     rotate(_transform->angularVelocity * deltaTime);
-
+    
+    
     if (_modelMatrixDirty) {
         updateModelMatrix();
         _modelMatrixDirty = false;

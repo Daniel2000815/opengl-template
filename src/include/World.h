@@ -17,6 +17,8 @@ private:
     int _timeScale = 1;
     vec3 _gravity = vec3(0.0f);
     float _physicsStep = 1.0f / _physicsFPS;
+    float _frictionCoefficient = 0.1f;
+    float _angularFrictionCoefficient = 0.02f;
     std::chrono::high_resolution_clock::time_point _t1, _t2;
     bool _canContinue = true;
 

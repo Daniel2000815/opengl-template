@@ -92,6 +92,7 @@ void testScene2(World& world, Shader* shader, Camera* cam) {
     c1.setPosition(vec3(2.0f, -2.0f, 0.0f));
     c2.setPosition(vec3(0.0f, 2.0f, 0.0f));
 
+    s.setPosition(vec3(0, -0.5f, 0));
     s.setRenderMode(Shader::RenderMode::Texture);
     s.addVelocity(vec3(0.0f, -3.0f, 0.0f));
 

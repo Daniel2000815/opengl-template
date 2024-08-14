@@ -59,8 +59,8 @@ CollisionData CollisionSolver::solve(const Actor* col1, const Actor* col2)
 
     vec3 linearForce2 = impulseMagnitude * data.normal;
     vec3 linearForce1 = -linearForce2;
-    vec3 angularForce1 = glm::cross(-linearForce1, data.p1 - col1->transform()->position );
-    vec3 angularForce2 = glm::cross(-linearForce2, data.p2 - col2->transform()->position);
+    vec3 angularForce1 = glm::cross(linearForce1, data.p1 - col1->transform()->position );
+    vec3 angularForce2 = glm::cross(linearForce2, data.p2 - col2->transform()->position);
 
     data.response1 = { linearForce1, angularForce1 };
     data.response2 = { linearForce2, angularForce2 };
