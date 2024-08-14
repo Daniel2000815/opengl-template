@@ -11,7 +11,6 @@ class Cube;
 
 class Utils {
 public:
-    // Funciones para imprimir vectores y matrices
     template <typename T>
     static void printVec(const std::string& name, const T& vec);
 
@@ -21,9 +20,6 @@ public:
     // Funciones existentes en la clase Utils
     template <typename T, typename U>
     static void copyVecToArray(const std::vector<T>& vecArray, std::vector<U>& array);
-
-    template <typename T>
-    static std::vector<T> combineArrays(const std::vector<T>& v1, std::vector<T>& v2);
 
     static vec3 closestPointToCube(vec3 p, const Cube& c);
 };

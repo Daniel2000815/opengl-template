@@ -13,19 +13,21 @@ using namespace std;
 class UI {
 
 private:
-    double _lastTimeFPS;
-    int _nbFrames;
     class World* _world;
     class Window* _window;
-    double _frameTime;
     ImGuiIO* _io;
+
+    double _lastTimeFPS;
+    int _nbFrames;
+
+    double _frameTime;
 
 public:
     UI(World* world, Window* window);
     ~UI();
-    void tick();
-    bool mouseHovering();
 
+    void tick();
+    bool mouseHovering() const;
 };
 
 #endif

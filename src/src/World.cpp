@@ -129,10 +129,7 @@ void World::tick(float deltaTime) {
         solveCollisions();
     }
 
-    
-
     for (Actor* actor : _actors) {
         actor->tick(deltaTime);
-        Utils::printVec(actor->name(), actor->transform()->angularVelocity);
     }
 }

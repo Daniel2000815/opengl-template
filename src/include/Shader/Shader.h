@@ -13,17 +13,18 @@ public:
 
     Shader(Camera* camera, Window* window, std::string fragmentShaderPath = "./Shaders/frag_basic.glsl");
     ~Shader();
+
     void tick(float deltaTime);
 
     void updateViewMatrix(glm::mat4 viewMatrix);
     void setModelMatrix(glm::mat4 &newMatrix);
     void setRenderMode(RenderMode newMode);
     void updateWindowDimensions(float fov, int width, int height);
-    inline GLuint id(){return _programID;}
+    inline GLuint id() const {return _programID;}
 
-    inline glm::mat4 viewMatrix() { return _viewMatrix; }
-    inline glm::mat4 projectionMatrix() { return _projectionMatrix; }
-    inline glm::mat4 modelMatrix() { return _modelMatrix; }
+    inline glm::mat4 viewMatrix() const { return _viewMatrix; }
+    inline glm::mat4 projectionMatrix() const  { return _projectionMatrix; }
+    inline glm::mat4 modelMatrix() const { return _modelMatrix; }
 
     
 private:

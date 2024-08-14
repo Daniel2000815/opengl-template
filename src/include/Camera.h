@@ -14,21 +14,23 @@ public:
 
     const vec3& position() const { return _position; }
     void setPosition(const vec3& position);
-    void moveForward(float deltaDistance);
-    void moveRight(float deltaDistance);
-    void moveUp(float deltaDistance);
-
-    float fov() const { return _fov; }
-    void setFov(float fov);
 
     const vec3& forward() const { return _forward; }
     const vec3& right() const { return _right; }
     const vec3& up() const { return _up; }
 
-    const glm::mat4 viewMatrix() const;
+    void moveForward(float deltaDistance);
+    void moveRight(float deltaDistance);
+    void moveUp(float deltaDistance);
 
     void rotate(double horizontalDelta, double verticalDelta);
     void setRotation(double horizontal, double vertical);
+
+    float fov() const { return _fov; }
+    void setFov(float fov);
+
+    const glm::mat4 viewMatrix() const;
+
     void tick(float delta);
 
 private:

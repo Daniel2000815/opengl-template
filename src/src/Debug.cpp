@@ -56,6 +56,13 @@ void Debug::actorVertices(Actor* actor)
     }
 }
 
+void Debug::actorNormals(Actor* actor)
+{
+
+    for (int i = 0; i < actor->vertices().size() / 3; i++)
+        Debug::drawLine(actor->shader(), actor->vertexWorld(i), actor->vertexWorld(i) + 0.1f * actor->normalWorld(i));
+}
+
 void Debug::tick(float deltaTime) {
     glClear(GL_DEPTH_BUFFER_BIT);
     renderDebugObjects(deltaTime);

@@ -21,8 +21,8 @@ struct CollisionData {
 	vec3 mtv;
 	float depth;
 	bool hit;
-	std::pair<vec3, vec3> response1;
-	std::pair<vec3, vec3> response2;
+	std::pair<vec3, vec3> response1;	// linearForce, angularForce
+	std::pair<vec3, vec3> response2;	// linearForce, angularForce
 
 	CollisionData() : p1(0.0f), p2(0.0f), normal(0.0f), mtv(0.0f), depth(0.0f), hit(false), response1(), response2()  {}
 	CollisionData(vec3 p1, vec3 p2, vec3 mtv) : response1(), response2() {
@@ -55,12 +55,11 @@ protected:
 
 public:
 	ColliderType type() const { return _type; }
-	virtual ~Collider() {} // Destructor virtual
+	virtual ~Collider() {} // Virtual destructor
 };
 
 class SphereCollider : public Collider {
 public:
-	SphereCollider() : Collider(SPHERE) {}
 	SphereCollider(vec3 c, float r) : Collider(SPHERE), _center(c), _radius(r) {}
 
 private:
