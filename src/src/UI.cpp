@@ -141,7 +141,7 @@ void UI::tick()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-bool UI::mouseHovering()
+bool UI::mouseHovering() const
 {
     return _io->WantCaptureMouse;
 }

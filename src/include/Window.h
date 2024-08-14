@@ -34,11 +34,13 @@ public:
     void swap();
     void clear();
     void close();
-    GLFWwindow* window() { return _window; }
+
+    GLFWwindow* window() const { return _window; }
+    
     typedef void* (*loadProc)(const char*);
     loadProc getLoadProc() { return (loadProc)glfwGetProcAddress; }
-    bool shouldClose() { return glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(_window); }
-    //GLADloadproc gladProcAddress() { return (GLADloadproc)glfwGetProcAddress; }
+    
+    bool shouldClose() const { return glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(_window); }
 
     void onMouseButton(mouse_button_callback lambda);
     void onResize(resize_callback lambda);

@@ -2,6 +2,7 @@
 #include <Actors/Cube.h>
 #include <Physics/Collider.h>  // delete this after test
 #include <Debug.h>
+#include <Utils.h>
 
 World::World(Window* window) {
     _actors = std::vector<Actor*>{};
@@ -90,14 +91,33 @@ void World::solveCollisions()
 
             //CollisionData colData = _collisionSolver->solve(a, b);
             CollisionData colResponse = _collisionSolver->solve(a, b);
+            
+            if (colResponse.hit) {
+                // Aplica la respuesta de colisión
+                a->addVelocity(colResponse.response1.first);
+                b->addVelocity(colResponse.response2.first);
+                a->addTorque(colResponse.response1.second);
+                b->addTorque(colResponse.response2.second);
 
-            a->addVelocity(colResponse.response1.first);
-            b->addVelocity(colResponse.response2.first);
-            a->addTorque(colResponse.response1.second);
-            b->addTorque(colResponse.response2.second);
+
+                float normalForceMagnitude = glm::length(colResponse.response1.first);
+                
+                vec3 relativeVelocity = a->transform()->velocity - b->transform()->velocity;
+                vec3 tangentVelocity = relativeVelocity - glm::dot(relativeVelocity, colResponse.normal) * colResponse.normal;
+                vec3 frictionForce = -glm::normalize(tangentVelocity) * glm::min(glm::length(tangentVelocity), normalForceMagnitude * _frictionCoefficient);
+
+                if (glm::length(frictionForce) > 0.0f) {
+                    a->addVelocity(frictionForce / a->mass());
+                    b->addVelocity(-frictionForce / b->mass());
+                }
+
+                vec3 angularFrictionTorqueA = -_angularFrictionCoefficient * a->transform()->angularVelocity;
+                vec3 angularFrictionTorqueB = -_angularFrictionCoefficient * b->transform()->angularVelocity;
+
+                if (glm::length(angularFrictionTorqueA) > 0.0f) a->addTorque(angularFrictionTorqueA);
+                if (glm::length(angularFrictionTorqueB) > 0.0f) b->addTorque(angularFrictionTorqueB);
+            }
         }
-
-        //if (!col) a->setColor(vec3(1.0f, 1.0f, 1.0f));
     }
 }
 

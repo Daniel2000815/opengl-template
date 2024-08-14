@@ -50,17 +50,14 @@ CollisionData CollisionSolver::solve(const Actor* col1, const Actor* col2)
         data.mtv = -data.mtv;
     }
 
-    Debug::drawSphere(col1->shader(), data.p1, 0.05f, vec3(1, 0, 0));
-    Debug::drawSphere(col1->shader(), data.p2, 0.05f, vec3(0, 1, 0));
-
     float velocityAlongNormal = (swap ? -1 : 1) * glm::dot(col2->transform()->velocity - col1->transform()->velocity, data.normal);
     float elasticity = (col2->elasticity() + col1->elasticity()) / 2.0f;
     float impulseMagnitude = (-(1.0f + elasticity) * velocityAlongNormal) / ((1 / col1->mass() + 1 / col2->mass()));
 
     vec3 linearForce2 = impulseMagnitude * data.normal;
     vec3 linearForce1 = -linearForce2;
-    vec3 angularForce1 = glm::cross(-linearForce1, data.p1 - col1->transform()->position );
-    vec3 angularForce2 = glm::cross(-linearForce2, data.p2 - col2->transform()->position);
+    vec3 angularForce1 = glm::cross(linearForce1, data.p1 - col1->transform()->position );
+    vec3 angularForce2 = glm::cross(linearForce2, data.p2 - col2->transform()->position);
 
     data.response1 = { linearForce1, angularForce1 };
     data.response2 = { linearForce2, angularForce2 };
@@ -107,6 +104,7 @@ CollisionData CollisionSolver::testSphereSphere(const Sphere& s1, const Sphere& 
 
     vec3 normal = glm::normalize(centervector);
     vec3 mtv = normal * ((c1->radius() + c2->radius()) - glm::length(centervector));
+
     return CollisionData(c1->center() + t1->position + normal * c1->radius(), c2->center() + t2->position - normal * c2->radius(), mtv);
 }
 
