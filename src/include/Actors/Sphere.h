@@ -11,6 +11,9 @@ private:
 public:
     Sphere(Shader* shader, uint16_t resolution = 8, float radius = 1.f);
     float radius() const;
+    mat3 inertiaTensor() const override;
+
+    void setRadius(float r);
 };
 
 #endif

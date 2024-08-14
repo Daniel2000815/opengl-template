@@ -20,6 +20,8 @@ public:
     void setWidth(float width) { _width = width; }
     uint16_t nPoints() { return _vertices.size() / 3; }
 
+    mat3 inertiaTensor() const override;
+
 };
 
 #endif

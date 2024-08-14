@@ -21,9 +21,11 @@ struct CollisionData {
 	vec3 mtv;
 	float depth;
 	bool hit;
+	std::pair<vec3, vec3> response1;
+	std::pair<vec3, vec3> response2;
 
-	CollisionData() : p1(0.0f), p2(0.0f), normal(0.0f), mtv(0.0f), depth(0.0f), hit(false) {}
-	CollisionData(vec3 p1, vec3 p2, vec3 mtv) {
+	CollisionData() : p1(0.0f), p2(0.0f), normal(0.0f), mtv(0.0f), depth(0.0f), hit(false), response1(), response2()  {}
+	CollisionData(vec3 p1, vec3 p2, vec3 mtv) : response1(), response2() {
 		this->p1 = p1;
 		this->p2 = p2;
 		this->mtv = mtv;
@@ -35,7 +37,7 @@ struct CollisionData {
 		hit = true;
 	}
 
-	CollisionData(vec3 normal, vec3 mtv) {
+	CollisionData(vec3 normal, vec3 mtv) : response1(), response2() {
 		this->p1 = vec3(0.0f);
 		this->p2 = vec3(0.0f);
 		this->mtv = mtv;

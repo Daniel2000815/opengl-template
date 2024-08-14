@@ -88,7 +88,9 @@ Actor::Actor(Shader *shader)
     _transform = new Transform();
     _modelMatrix = glm::mat4(1.f);
     _mass = 1.0f;
+    _elasticity = 1.0f;
     _kinematic = false;
+    _modelMatrixDirty = false;
 
     this->_shader = shader;
     this->_vertices = std::vector<GLfloat>{};
@@ -127,9 +129,30 @@ void Actor::tick(float deltaTime)
             Debug::drawLine(_shader, vertexWorld(i), vertexWorld(i) + 0.1f * normalWorld(i));
     }
 
-    printf("%s translating", name());
-    Utils::printVec("v", _transform->velocity);
     translate(_transform->velocity * deltaTime);
+    rotate(_transform->angularVelocity * deltaTime);
+
+    if (_modelMatrixDirty) {
+        updateModelMatrix();
+        _modelMatrixDirty = false;
+    }
+}
+
+void Actor::addVelocity(vec3 v)
+{
+    if (_kinematic)
+        return;
+
+    _transform->velocity += v / _mass;
+}
+
+void Actor::addTorque(vec3 torque)
+{
+    if (_kinematic)
+        return;
+
+    // Equivalent to glm::inverse(inertiaTensor()) * torque
+    _transform->angularVelocity += torque / inertiaTensor();
 }
 
 
@@ -146,23 +169,30 @@ vec3 Actor::normalWorld(int vertexIdx) const
 
 void Actor::setPosition(glm::vec3 position){
     _transform->position = position;
-    _modelMatrix[3][0] = position[0];
-    _modelMatrix[3][1] = position[1];
-    _modelMatrix[3][2] = position[2];
+    _modelMatrixDirty = true;
+}
+
+const Actor* Actor::translate(glm::vec3 translation) {
+    _transform->position += translation;
+    _modelMatrixDirty = true;
+
+    return this;
 }
 
 void Actor::setRotation(vec3 angle_radians)
 {
-    _modelMatrix = glm::mat4(1.0f);
-    setScale(_transform->scale);
-    
-    _modelMatrix = glm::rotate(_modelMatrix, angle_radians.z, glm::vec3(0.0f, 0.0f, 1.0f));
-    _modelMatrix = glm::rotate(_modelMatrix, angle_radians.y, glm::vec3(0.0f, 1.0f, 0.0f));
-    _modelMatrix = glm::rotate(_modelMatrix, angle_radians.x, glm::vec3(1.0f, 0.0f, 0.0f));
-    
-    setPosition(_transform->position);
-
     _transform->rotation = angle_radians;
+    _modelMatrixDirty = true;
+}
+
+const Actor* Actor::rotate(vec3 angle_radians) {
+    _transform->rotation.x += angle_radians.x;
+    _transform->rotation.y += angle_radians.y;
+    _transform->rotation.z += angle_radians.z;
+
+    _modelMatrixDirty = true;
+
+    return this;
 }
 
 void Actor::setScale(vec3 newScale)
@@ -171,13 +201,17 @@ void Actor::setScale(vec3 newScale)
         return;
     }
 
-    vec3 factor = 1.0f / _transform->scale * newScale;
-    scale(1.0f / _transform->scale * newScale);
+    _transform->scale = newScale;
+    _modelMatrixDirty = true;
 }
 
 const Actor* Actor::scale(glm::vec3 scale) {
+    if (glm::epsilonEqual(scale.x, 0.0f, 0.001f) || glm::epsilonEqual(scale.y, 0.0f, 0.001f) || glm::epsilonEqual(scale.z, 0.0f, 0.001f)) {
+        return this;
+    }
+
     _transform->scale *= scale;
-    _modelMatrix = glm::scale(_modelMatrix, scale);
+    _modelMatrixDirty = true;
 
     return this;
 }
@@ -206,22 +240,6 @@ void Actor::setVertex(size_t idx, vec3 localPosition)
     glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(GLfloat), _vertices.data(), GL_STATIC_DRAW);
 }
 
-const Actor* Actor::translate(glm::vec3 translation){
-    _transform->position += translation;
-    _modelMatrix = glm::translate(_modelMatrix, translation);
-
-    return this;
-}
-
-
-
-void Actor::addVelocity(vec3 v)
-{
-    if (_kinematic)
-        return;
-
-    _transform->velocity += v;
-}
 
 glm::mat3 Actor::rotationMatrix() const {
     glm::mat3 rotationMatrix;
@@ -290,20 +308,21 @@ std::vector<vec3> Actor::packedVertices() const
     return vertices;
 }
 
-const Actor* Actor::rotate(float angle_radians, glm::vec3 axis){
-    _modelMatrix = glm::rotate(_modelMatrix, angle_radians, axis);
+void Actor::updateModelMatrix() {
+    glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), _transform->position);
 
-    glm::vec3 _scale;
-    glm::quat _rotation;
-    glm::vec3 _translation;
-    glm::vec3 _skew;
-    glm::vec4 _perspective;
-    glm::decompose(_modelMatrix, _scale, _rotation, _translation, _skew, _perspective);
+    glm::mat4 rotX = glm::rotate(glm::mat4(1.0f), _transform->rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+    glm::mat4 rotY = glm::rotate(glm::mat4(1.0f), _transform->rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 rotZ = glm::rotate(glm::mat4(1.0f), _transform->rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
 
-    _rotation = glm::conjugate(_rotation);
-    this->_transform->rotation = glm::eulerAngles(_rotation);
-    return this;
+    glm::mat4 rotationMatrix = rotZ * rotY * rotX;
+
+    glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), _transform->scale);
+
+    _modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 }
+
+
 
 void Actor::printMesh(){
     

@@ -31,6 +31,24 @@ void Line::addPoint(glm::vec3 p) {
     bindResources();
 }
 
+mat3 Line::inertiaTensor() const
+{
+    const float width = _transform->scale.x;
+    const float height = _transform->scale.y;
+    const float depth = _transform->scale.z;
+
+    float I_xz = (1.0f / 12.0f) * _mass * glm::length(_endPoint - _startPoint);
+    float I_y = 0.0f;
+
+    glm::mat3 inertiaMatrixLocal = glm::mat3(
+        I_xz, 0.0f, 0.0f,
+        0.0f, I_y, 0.0f,
+        0.0f, 0.0f, I_xz
+    );
+
+    return rotationMatrix() * inertiaMatrixLocal * glm::transpose(rotationMatrix());
+}
+
 void Line::tick(float deltaTime) {
     glEnable(GL_DEPTH_TEST);
     

@@ -85,3 +85,28 @@ std::vector<glm::vec3> Cube::corners()
     return vertices;
 }
 
+mat3 Cube::inertiaTensor() const
+{
+    const float width = _transform->scale.x;
+    const float height = _transform->scale.y;
+    const float depth = _transform->scale.z;
+
+    float I_x = (1.0f / 12.0f) * _mass * (height * height + depth * depth);
+    float I_y = (1.0f / 12.0f) * _mass * (width * width + depth * depth);
+    float I_z = (1.0f / 12.0f) * _mass * (width * width + height * height);
+
+    glm::mat3 inertiaMatrixLocal = glm::mat3(
+        I_x, 0.0f, 0.0f,
+        0.0f, I_y, 0.0f,
+        0.0f, 0.0f, I_z
+    );
+
+    return rotationMatrix() * inertiaMatrixLocal * glm::transpose(rotationMatrix());
+}
+
+glm::vec3 Cube::extents() const
+{
+
+    return _transform->scale * 0.5f;
+}
+

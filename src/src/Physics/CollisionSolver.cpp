@@ -37,6 +37,11 @@ CollisionData CollisionSolver::solve(const Actor* col1, const Actor* col2)
     }
 
     CollisionData data = tests[col1->collider()->type()][col2->collider()->type()](col1, col2);
+    if (!data.hit) {
+        data.response1 = { vec3(0.0f), vec3(0.0f) };
+        data.response2 = { vec3(0.0f), vec3(0.0f) };
+        return data;
+    }
 
     if (swap)
     {
@@ -45,24 +50,32 @@ CollisionData CollisionSolver::solve(const Actor* col1, const Actor* col2)
         data.mtv = -data.mtv;
     }
 
+    Debug::drawSphere(col1->shader(), data.p1, 0.05f, vec3(1, 0, 0));
+    Debug::drawSphere(col1->shader(), data.p2, 0.05f, vec3(0, 1, 0));
+
+    float velocityAlongNormal = (swap ? -1 : 1) * glm::dot(col2->transform()->velocity - col1->transform()->velocity, data.normal);
+    float elasticity = (col2->elasticity() + col1->elasticity()) / 2.0f;
+    float impulseMagnitude = (-(1.0f + elasticity) * velocityAlongNormal) / ((1 / col1->mass() + 1 / col2->mass()));
+
+    vec3 linearForce2 = impulseMagnitude * data.normal;
+    vec3 linearForce1 = -linearForce2;
+    vec3 angularForce1 = glm::cross(-linearForce1, data.p1 - col1->transform()->position );
+    vec3 angularForce2 = glm::cross(-linearForce2, data.p2 - col2->transform()->position);
+
+    data.response1 = { linearForce1, angularForce1 };
+    data.response2 = { linearForce2, angularForce2 };
+
     return data;
 }
 
 CollisionData CollisionSolver::testCubeSphere(const Cube& c, const Sphere& s) const
 {
-    /*const SphereCollider* sCol = dynamic_cast<const SphereCollider*>(s.collider());
-    const BoxCollider* bCol = dynamic_cast<const BoxCollider*>(c.collider());*/
-
     glm::vec3 closestPoint = Utils::closestPointToCube(s.transform()->position, c);
-
-    //Debug::drawSphere(c.shader(), closestPoint, 0.1f, vec3(0.0f));
 
     glm::vec3 vectorToCenter =  -closestPoint + s.transform()->position;
     float distanceSquared = glm::dot(vectorToCenter, vectorToCenter);
 
-    //Debug::drawLine(c.shader(), closestPoint, closestPoint + vectorToCenter);
     if (distanceSquared > s.radius() * s.radius()) {
-        printf("FFFFFFFF %f, %f\n", distanceSquared, s.radius() * s.radius());
         return CollisionData(); // No hay colisión
     }
 
@@ -71,7 +84,30 @@ CollisionData CollisionSolver::testCubeSphere(const Cube& c, const Sphere& s) co
     float penetrationDepth = s.radius() - distance;
     glm::vec3 mtv = normal * penetrationDepth;
 
-    return CollisionData(normal, mtv);
+    glm::vec3 contactPointSphere = s.transform()->position - normal * s.radius();
+    glm::vec3 contactPointCube = closestPoint;
+
+    return CollisionData(contactPointCube, contactPointSphere, mtv);
+}
+
+CollisionData CollisionSolver::testSphereSphere(const Sphere& s1, const Sphere& s2) const
+{
+    const Transform* t1 = s1.transform();
+    const Transform* t2 = s2.transform();
+    const SphereCollider* c1 = dynamic_cast<const SphereCollider*>(s1.collider());
+    const SphereCollider* c2 = dynamic_cast<const SphereCollider*>(s2.collider());
+
+    vec3 centervector = (t2->position + c2->center()) - (t1->position + c1->center());
+
+    // todo: work with non uniform scale
+    if (glm::length(centervector) > t1->scale.x * c1->radius() + t2->scale.x * c2->radius()) {
+
+        return CollisionData();
+    }
+
+    vec3 normal = glm::normalize(centervector);
+    vec3 mtv = normal * ((c1->radius() + c2->radius()) - glm::length(centervector));
+    return CollisionData(c1->center() + t1->position + normal * c1->radius(), c2->center() + t2->position - normal * c2->radius(), mtv);
 }
 
 CollisionData CollisionSolver::testCubeCube(const Cube& boxA, const Cube& boxB) const
@@ -91,29 +127,17 @@ CollisionData CollisionSolver::testCubeCube(const Cube& boxA, const Cube& boxB) 
         }
     }
 
-    auto mtv = - bestAxis * minPenetration;
+    // Invertir el eje para obtener el Movimiento de Translación Mínimo (MTV)
+    auto mtv = -bestAxis * minPenetration;
+
+    // Usar el bestAxis para calcular los puntos de contacto
     auto contactPoints = computeCubeContactPoints(boxA, boxB, bestAxis);
+
+    // Dibujar los puntos de contacto para depuración (opcional)
+    Debug::drawLine(boxA.shader(), contactPoints.first, contactPoints.second);
+
+    // Crear y devolver los datos de colisión con los puntos de contacto y el MTV
     return CollisionData(contactPoints.first, contactPoints.second, mtv);
-}
-
-CollisionData CollisionSolver::testSphereSphere(const Sphere& s1, const Sphere& s2) const
-{
-    const Transform* t1 = s1.transform();
-    const Transform* t2 = s2.transform();
-    const SphereCollider* c1 = dynamic_cast<const SphereCollider*>(s1.collider());
-    const SphereCollider* c2 = dynamic_cast<const SphereCollider*>(s2.collider());
-
-    vec3 centervector = (t2->position + c2->center()) - (t1->position + c1->center());
-
-    // todo: work with non uniform scale
-    if (glm::length(centervector) > t1->scale.x * c1->radius() + t2->scale.x * c2->radius()) {
-        
-        return CollisionData();
-    }
-
-    vec3 normal = glm::normalize(centervector);
-    vec3 mtv = normal * ((c1->radius() + c2->radius()) - glm::length(centervector));
-    return CollisionData(c1->center() + t1->position + normal * c1->radius(), c2->center() + t2->position - normal * c2->radius(), mtv);
 }
 
 std::vector<vec3> CollisionSolver::cubeSeparatingAxes(const Cube& boxA, const Cube& boxB) const
@@ -194,4 +218,26 @@ std::pair<vec3, vec3> CollisionSolver::computeCubeContactPoints(const Cube& boxA
     }
 
     return { contactPointA, contactPointB };
+
+    //vec3 normalizedAxis = glm::normalize(bestAxis);
+
+    // Transformar los centros de las cajas al espacio del mundo
+    //auto centerA = boxA.transform()->position;
+    //auto centerB = boxB.transform()->position;
+
+    //// Proyectar los centros en el eje de separación
+    //float centerA_proj = glm::dot(centerA, normalizedAxis);
+    //float centerB_proj = glm::dot(centerB, normalizedAxis);
+
+    //vec3 contactPointA, contactPointB;
+    //if (centerA_proj < centerB_proj) {
+    //    contactPointA = centerA + normalizedAxis * (centerB_proj - centerA_proj) * 0.5f;
+    //    contactPointB = centerB - normalizedAxis * (centerB_proj - centerA_proj) * 0.5f;
+    //}
+    //else {
+    //    contactPointA = centerA - normalizedAxis * (centerA_proj - centerB_proj) * 0.5f;
+    //    contactPointB = centerB + normalizedAxis * (centerA_proj - centerB_proj) * 0.5f;
+    //}
+
+    //return { contactPointA, contactPointB };
 }

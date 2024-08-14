@@ -78,6 +78,9 @@ void UI::tick()
     if (ImGui::SliderInt("Time Scale", &timeScale, 0, 20))
         _world->setTimeScale(timeScale);
 
+    float windowWidth = ImGui::GetContentRegionAvail().x;
+    float buttonWidth = (windowWidth - ImGui::GetStyle().ItemSpacing.x * 2) / 3.0f;
+
     for (auto& object : _world->actors()) {
         if (ImGui::TreeNode(object->name()))
         {
@@ -85,12 +88,48 @@ void UI::tick()
             float rotation[4] = { object->rotation().x, object->rotation().y, object->rotation().z, 0.0f };
             float scale[4] = { object->scale().x, object->scale().y, object->scale().z, 1.0f };
 
-            if (ImGui::InputFloat3("position", position))
+            /*if (ImGui::InputFloat3("position", position))
                 object->setPosition(glm::vec3(position[0], position[1], position[2]));
             if (ImGui::InputFloat3("rotation", rotation))
                 object->setRotation(glm::vec3(rotation[0], rotation[1], rotation[2]));
             if (ImGui::InputFloat3("scale", scale))
-                object->setScale(glm::vec3(scale[0], scale[1], scale[2]));
+                object->setScale(glm::vec3(scale[0], scale[1], scale[2]));*/
+
+            ImGui::PushItemWidth(buttonWidth);
+            if (ImGui::Button("Translate X"))    object->translate(vec3(1, 0, 0));
+            ImGui::SameLine();
+            if (ImGui::Button("Translate Y"))    object->translate(vec3(0, 1, 0));
+            ImGui::SameLine();
+            if (ImGui::Button("Translate Z"))    object->translate(vec3(0, 0, 1));
+            
+            if (ImGui::Button("Rotate X"))    object->rotate(vec3(1, 0, 0));
+            ImGui::SameLine();
+            if (ImGui::Button("Rotate Y"))    object->rotate(vec3(0, 1, 0));
+            ImGui::SameLine();
+            if (ImGui::Button("Rotate Z"))    object->rotate(vec3(0, 0, 1));
+
+            if (ImGui::Button("Scale X"))    object->scale(vec3(2, 1, 1));
+            ImGui::SameLine();
+            if (ImGui::Button("Scale Y"))    object->scale(vec3(1, 2, 1));
+            ImGui::SameLine();
+            if (ImGui::Button("Scale Z"))    object->scale(vec3(1, 1, 2));
+
+            ImGui::PopItemWidth();
+
+            if (ImGui::Button("Add velocity")) {
+                object->addVelocity(vec3(0, 1, 0));
+            }
+            if (ImGui::Button("Add torque")) {
+                object->addTorque(vec3(0, 1, 0));
+            }
+            if (ImGui::Button("Reset")) {
+                object->setPosition(vec3(0.0f));
+                object->setRotation(vec3(0.0f));
+                object->setScale(vec3(1.0f));
+                object->setVelocity(vec3(0.0f));
+                object->setAngularVelocity(vec3(0.0f));
+            }
+            
             ImGui::TreePop();
         }
     }

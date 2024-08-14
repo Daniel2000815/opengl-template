@@ -44,7 +44,13 @@ World::World(Window* window) {
 
 void World::addActor(Actor* actor)
 {
+    // TODO; check better solution
+    // Otherwise on first frame cubes collide with each other,
+    // since collision test uses model matrix
+    actor->updateModelMatrix();
+
     _actors.push_back(actor);
+
 }
 
 void World::solveDynamics(float delta)
@@ -74,9 +80,7 @@ void World::solveDynamics(float delta)
 
 void World::solveCollisions()
 {
-    std::vector<CollisionData> collisions;
 
-    printf("a----------\n");
     for (Actor* a : _actors) {
         bool col = false;
         for (Actor* b : _actors)
@@ -84,41 +88,17 @@ void World::solveCollisions()
             if (a == b) break;
             if (!a->collider() || !b->collider())   continue;
 
-            CollisionData colData = _collisionSolver->solve(a, b);
+            //CollisionData colData = _collisionSolver->solve(a, b);
+            CollisionData colResponse = _collisionSolver->solve(a, b);
 
-            if (colData.hit) {
-                col = true;
-                /*a->setColor(vec3(1.0f, 0.0f, 0.0f));
-                b->setColor(vec3(0.0f, 0.0f, 1.0f));*/
-                Debug::drawLine(a->shader(), colData.p1, colData.p1 + colData.normal, vec3(0.0f, 1.0f, 1.0f), 50.0f);
-                Debug::drawLine(b->shader(), colData.p2, colData.p2 - colData.normal, vec3(1.0f, 1.0f, 0.0f), 50.0f);
-                //Debug::drawSphere(a->shader(), colData.p1, 0.05f, vec3(1.0f, 0.0f, 0.0f));
-                //Debug::drawSphere(a->shader(), colData.p2, 0.05f, vec3(0.0f, 0.0f, 1.0f));
-                /*Debug::drawLine(a->shader(), a->transform()->position, a->transform()->position - glm::normalize(colData.mtv), vec3(0.0f, 1.0f, 1.0f), 50.0f);
-                Debug::drawLine(b->shader(), b->transform()->position, b->transform()->position + glm::normalize(colData.mtv), vec3(1.0f, 1.0f, 0.0f), 50.0f);*/
-
-                //glm::vec3 relativeVelocity = b->transform()->velocity - a->transform()->velocity;
-                //float normalVelocity = glm::dot(relativeVelocity, colData.normal);
-
-                //// Calcular el impulso
-                //const float restitution = 0.8f;
-                //float impulseMagnitude = (-(1 + restitution) * normalVelocity) / (1 / a->mass() + 1 / b->mass());
-
-                //// Actualizar las velocidades
-                //glm::vec3 impulse = impulseMagnitude * colData.normal;
-                //a->addVelocity(-impulse / a->mass());
-                //b->addVelocity(+impulse / b->mass());
-
-                a->addVelocity(-(b->kinematic() ? 1.0f : 0.5f) * colData.mtv);
-                b->addVelocity(+(a->kinematic() ? 1.0f : 0.5f) * colData.mtv);
-
-                collisions.push_back(colData);
-            }
+            a->addVelocity(colResponse.response1.first);
+            b->addVelocity(colResponse.response2.first);
+            a->addTorque(colResponse.response1.second);
+            b->addTorque(colResponse.response2.second);
         }
 
         //if (!col) a->setColor(vec3(1.0f, 1.0f, 1.0f));
     }
-    printf("----------\n");
 }
 
 void World::tick(float deltaTime) {
