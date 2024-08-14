@@ -130,6 +130,7 @@ void Actor::tick(float deltaTime)
     }
 
     translate(_transform->velocity * deltaTime);
+    rotate(_transform->angularVelocity * deltaTime);
 
     if (_modelMatrixDirty) {
         updateModelMatrix();
@@ -150,6 +151,7 @@ void Actor::addTorque(vec3 torque)
     if (_kinematic)
         return;
 
+    // Equivalent to glm::inverse(inertiaTensor()) * torque
     _transform->angularVelocity += torque / inertiaTensor();
 }
 

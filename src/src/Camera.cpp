@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include <Utils.h>
 
 Camera::Camera(Window* window, UI* ui) :
     _position(0.0f, 0.0f, 0.0f),
@@ -31,7 +32,8 @@ void Camera::rotate(double horizontalDelta, double verticalDelta)
 {
     _horizontalAngle += _rotateSpeed * horizontalDelta;
     _verticalAngle += _rotateSpeed * verticalDelta;
-    printf("camera %f, %f", _horizontalAngle, _verticalAngle);
+    printf("camera %f, %f\n", _horizontalAngle, _verticalAngle);
+    Utils::printVec("camera pos", _position);
     
     setRotation(_horizontalAngle, _verticalAngle);
 }

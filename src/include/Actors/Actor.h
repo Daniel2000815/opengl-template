@@ -101,7 +101,9 @@ class Actor
         virtual mat3 inertiaTensor() const = 0;
 
         void addVelocity(vec3 v);
-        void addTorque(vec3 v);
+        void setVelocity(vec3 v) { _transform->velocity = v; }
+        void addTorque(vec3 t);
+        void setAngularVelocity(vec3 v) { _transform->angularVelocity = v; }
 
         glm::mat3 rotationMatrix() const;
         

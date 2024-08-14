@@ -104,3 +104,9 @@ mat3 Cube::inertiaTensor() const
     return rotationMatrix() * inertiaMatrixLocal * glm::transpose(rotationMatrix());
 }
 
+glm::vec3 Cube::extents() const
+{
+
+    return _transform->scale * 0.5f;
+}
+

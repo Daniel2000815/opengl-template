@@ -97,6 +97,7 @@ Window::Window()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDepthFunc(GL_LESS);   //  Accept fragment if it closer to the camera than the former one
+
 }
 
 void Window::swap()

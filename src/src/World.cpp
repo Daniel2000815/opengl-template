@@ -89,10 +89,12 @@ void World::solveCollisions()
             if (!a->collider() || !b->collider())   continue;
 
             //CollisionData colData = _collisionSolver->solve(a, b);
-            std::pair<vec3, float> colResponse = _collisionSolver->solve(a, b);
+            CollisionData colResponse = _collisionSolver->solve(a, b);
 
-            a->addVelocity(-colResponse.first);
-            b->addVelocity(+colResponse.first);            
+            a->addVelocity(colResponse.response1.first);
+            b->addVelocity(colResponse.response2.first);
+            a->addTorque(colResponse.response1.second);
+            b->addTorque(colResponse.response2.second);
         }
 
         //if (!col) a->setColor(vec3(1.0f, 1.0f, 1.0f));

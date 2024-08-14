@@ -12,7 +12,7 @@ class Sphere;
 
 class CollisionSolver {
 public:
-    std::pair<vec3, float> solve(const Actor* col1, const Actor* col2);
+    CollisionData solve(const Actor* col1, const Actor* col2);
 
     CollisionData testCubeSphere(const Cube& p, const Sphere& s) const;
     CollisionData testCubeCube(const Cube& p, const Cube& s) const;
